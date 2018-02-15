@@ -14,8 +14,8 @@
  */
 
 // Load Dependencies:
-const VL  = require('./shared/viewlift');  // Custom VL API Module
-const ESI = require('./shared/es_index');  // Custom ES Index Module
+const API  = require('./shared/ViewLift/api.js');         // Custom VL API Module
+const ESI = require('./shared/ElasticSearch/index.js');  // Custom ES Index Module
 
 /**
  * Lambda Entry Point
@@ -31,8 +31,8 @@ const ESI = require('./shared/es_index');  // Custom ES Index Module
  */
 exports.handler = function(event, context, callback) {
   // Instantiate VL API & ES Index Classes..
-  const vl  = new VL(process.env.STAGE, 'server'); // Custom ViewLift API Class
-  const esi = new ESI(process.env.ES_ENDPOINT);    // Custom ElasticSearch Indexing Class
+  const api = new API(process.env.STAGE, 'server'); // Custom ViewLift API Class
+  const esi = new ESI(process.env.ES_ENDPOINT);     // Custom ElasticSearch Indexing Class
 
   //** Iterate through DynamoDB Events **//
   const processing = []; 
