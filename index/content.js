@@ -6,8 +6,8 @@
  * receives the updated data. This service will parse the required data, and update the ElasticSearch
  * index accordingly. 
  *
- * @requires viewlift.js
- * @requires es_index.js
+ * @requires api.js
+ * @requires index.js
  *
  * @author Rob Mullins <rob@viewlift.com>
  * @version 2.0.0
@@ -15,7 +15,7 @@
 
 // Load Dependencies:
 const API  = require('./shared/ViewLift/api.js');         // Custom VL API Module
-const ESI = require('./shared/ElasticSearch/index.js');  // Custom ES Index Module
+const ESI  = require('./shared/ElasticSearch/index.js');  // Custom ES Index Module
 
 /**
  * Lambda Entry Point
@@ -30,6 +30,10 @@ const ESI = require('./shared/ElasticSearch/index.js');  // Custom ES Index Modu
  * @param {object|string} success - Optional JSON.stringify compatible object or string to indicate Lambda success.
  */
 exports.handler = function(event, context, callback) {
+  /*********************************************************************************************
+  *                                    MAIN
+  *********************************************************************************************/
+
   // Instantiate VL API & ES Index Classes..
   const api = new API(process.env.STAGE, 'server'); // Custom ViewLift API Class
   const esi = new ESI(process.env.ES_ENDPOINT);     // Custom ElasticSearch Indexing Class
@@ -38,7 +42,10 @@ exports.handler = function(event, context, callback) {
   const processing = []; 
   event.Records.forEach(record => {
     //** Perform Async Indexing & Push Promise to Array **// 
-    processing.push(indexContent(record)); 
+    const type = record.dynamodb.NewImage.objectKey.S;
+    if (type === 'video') { // Only handle events with supported content type
+      processing.push(handleEvent(record)); 
+    }
   });
 
   //** Wait for all events to be processed, Regardless of success **//
@@ -67,62 +74,141 @@ exports.handler = function(event, context, callback) {
         return callback(null, 'Successfully processed all ' +total +' events!');
       }
   });
-} //exports.handler
 
-/**
- * Handle indexing for content
- * @param record <mixed> - The DynamoDB Event Record.
- * @todo
- */
-function indexContent(record) {
-  // Determine & Handle Event Type (INSERT/MODIFY/DELETE)
-  switch (record.eventName) {
-    case 'INSERT':
-      // We do not currently index on INSERT events - 2/13/18
-      //insertDocument(null, record);
-      break;
-    case 'MODIFY':
-      //modifyDocument(null, record);
-      break;
-    case 'REMOVE':
-      //removeDocument(null, record);
-      break;
+  /*********************************************************************************************
+  *                                   FUNCTIONS 
+  *********************************************************************************************/
+
+  /**
+   * Determines the event type and handles it appropriately.
+   *
+   * @param  {object} record  - The DynamoDB Event Record.
+   * @return {Promise.<boolean,Error>} Promise fulfilled with true, rejects with Error.
+   */
+  function handleEvent(record) {
+    switch (record.eventName) {
+      case 'INSERT':
+        return _handleInsert(record);
+      case 'MODIFY':
+        return _handleModify(record);
+      case 'REMOVE':
+        return _handleRemove(record);
+    }
   }
-}
 
-/**
- * Parses the indexable data fields from a DynamoDB
- * record & prepares the document body object. 
- * Called during INSERT & MODIFY events.
- * @param data <mixed> - The data being parsed.
- * @return <mixed>     - The ES-upload-ready object.
- */
-function getDocBody(record) {
-  switch (record.dynamodb.NewImage.objectKey) {
-    case 'video':
-      return _prepareVideoDocBody(record);
-      break;
+  /**
+   * Handles INSERT Events.
+   *
+   * @param    {object} record - The DynamoDB Event Record.
+   * @return   {Promise.<boolean,Error>}
+   * @fulfills {boolean}         True on succesful insert.
+   * @rejects  {Error}           An ES error.
+   */
+  function _handleInsert(record) {
+    return new Promise((fulfill, reject) => {
+      prepareDocument(record.dynamodb.NewImage.objectKey.S, record.dynamodb.Keys.id.S)
+        .then(doc => {
+          esi.insertDocument(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S, doc)
+            .then(success => {
+              fulfill(true);
+          }).catch(e => {
+            reject(e);
+          });
+      }).catch(e => {
+        reject(e);
+      });
+    });
   }
-}
 
-/**
- * Parses the indexable data fields from a DynamoDB
- * Video record & returns the document body object. 
- * Called during INSERT & MODIFY events.
- * @param data <mixed> - The data being parsed.
- * @return <mixed>     - The document object.
- */   
-function _prepareVideoDocBody(record) {
-  return {
-    contentType:   record.dynamodb.NewImage.objectKey,
-    url:           record.dynamodb.NewImage.permalink, 
-    imageUrl:      record.dynamodb.NewImage.videoImage.url || record.dynamodb.NewImage.posterImage.url,
-    description:   record.dynamodb.NewImage.description,
-    runtime:       record.dynamodb.NewImage.runtime,
-    status:        record.dynamodb.NewImage.status,
-    logLine:       null,
-    creditBlocks:  null,
-    isTrailer:     null,
+  /**
+   * Handles MODIFY Events.
+   *
+   * @param    {object} record - The DynamoDB Event Record.
+   * @return   {Promise.<boolean,Error>}
+   * @fulfills {boolean}         True on succesful modify.
+   * @rejects  {Error}           An ES error.
+   */
+  function _handleModify(record) {
+    return new Promise((fulfill, reject) => {
+      prepareDocument(record.dynamodb.NewImage.objectKey.S, record.dynamodb.Keys.id.S)
+        .then(doc => {
+          esi.modifyDocument(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S, doc)
+            .then(success => {
+              fulfill(true);
+          }).catch(e => {
+            reject(e);
+          });
+      }).catch(e => {
+        reject(e);
+      });
+    });
   }
-}
 
+  /**
+   * Handles REMOVE Events.
+   *
+   * @param    {object} record - The DynamoDB Event Record.
+   * @return   {Promise.<boolean,Error>}
+   * @fulfills {boolean}         True on succesful remove.
+   * @rejects  {Error}           An ES error.
+   */
+  function _handleRemove(record) {
+    return new Promise((fulfill, reject) => {
+      esi.removeDocument(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S)
+        .then(success => {
+          fulfill(true);
+      }).catch(e => {
+        reject(e);
+      });
+    });
+  }
+
+  /**
+   * Prepares the document body object for insert/modify events.
+   *
+   * @param    {object} record - The DynamoDB Event Record.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}          The document body object.
+   * @rejects  {Error}           A VL API Error.
+   */
+  function prepareDocument(record) {
+    switch (record.dynamodb.NewImage.objectKey.S) {
+      case 'video':
+        return _prepareVideoDocument(record);
+    }
+  }
+
+  /**
+   * Prepare a video document object with data retrieve from VL API.
+   * 
+   * @param    {object} record - The DynamoDB Event Record.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}          The document body object.
+   * @rejects  {Error}           A VL API Error.
+   */   
+  function _prepareVideoDocument(record) {
+    return new Promise((fulfill, reject) => {
+      // Get Complete Video Data from API:
+      api.getVideo(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S)
+        .then(video => {
+          // Define & Build Document Body:
+          const doc = {
+            title:        video.gist.title,
+            type:         'content',
+            contentType:  'video',
+            url:          video.gist.permalink,
+            imageUrl:     video.contentDetails.videoImage.url || video.contentDetails.posterImage.url,
+            description:  video.gist.description,
+            runtime:      video.gist.runtime,
+            status:       video.contentDetails.status,
+            creditBlocks: video.creditBlocks,
+            isTrailer:    video.gist.isTrailer || false,
+          };
+          // Fulfill with video document:
+          fulfill(doc);
+      }).catch(e => {
+        reject(e);
+      });
+    });
+  }
+} /****************************************************************************************/

@@ -26,19 +26,8 @@ class Index {
     } else {
       this.endpoint = endpoint;
     }
-    this.es = ES.Client({host: this.endpoint, log: 'trace'}); // Initialize ES Client
-  }
-
-  /**
-   * Modify an existing document in an existing index.
-   *
-   * @param {string} index - The name of the index containing the document to modify.
-   * @param {string} id    - The ID of the document to modify. 
-   * @param {object} doc   - The replacing document object.
-   */
-  modifyDocument(record) {
-    console.log('Processing MODIFY Event, printing record...');
-    console.log(record);
+    this.es = new ES.Client({host: this.endpoint, log: 'trace'}); // Initialize ES Client
+    this.model = model; 
   }
 
   /**
@@ -52,7 +41,7 @@ class Index {
    * @rejects  {InsertError}    Error inserting the document.
    * @rejects  {IndexError}     Error creating an index. 
    */
-  insertDocument(index, doc) {
+  insertDocument(index, id, doc) {
     const self = this;
     return new Promise((fulfill, reject) => {
       // Check if index exists:
@@ -60,12 +49,12 @@ class Index {
         .then(exists => {
           // Create index if it doesn't already exist:
           if (!exists) {
-            self.createIndex(es, record.dynamodb.Keys.site, getIndexModel())
+            self.createIndex(es, record.dynamodb.Keys.site, self.model)
               .then(() => {
                 // Insert document into newly created index:
                 self._insertDocument(es, record)
-                  .then(() => {
-                    fulfill(); // fulfill when complete!
+                  .then((success) => {
+                    fulfill(true); // fulfill when complete!
                 }).catch(e => {
                   console.log('Error inserting document %s', record.dynamodb.NewImage.id);
                   reject(e);
@@ -77,8 +66,8 @@ class Index {
           } else {
             // Else Insert document into existing index:
             self._insertDocument(es, record)
-              .then(() => {
-                fulfill(); // fulfill when complete!
+              .then((success) => {
+                fulfill(true); // fulfill when complete!
             }).catch(e => {
               console.log('Error inserting document %s', record.dynamodb.NewImage.id);
               reject(e);
@@ -101,12 +90,28 @@ class Index {
    * @fulfills {string}         Response body from ES insert request.
    * @rejects  {Error}          An ES error.
    */
-  _insertDocument(index, doc) {
+  _insertDocument(index, id, doc) {
     return this.es.index({
-      index: record.dynamodb.Keys.site,
-      type:  record.dynamodb.NewImage.objectKey,
-      id:    record.dynamodb.NewImage.id,
-      body:  this.getDocBody(record)
+      index:   index,
+      id:      id,
+      body:    doc,
+      refresh: true
+    });
+  }
+
+  /**
+   * Modify an existing document in an existing index.
+   *
+   * @param {string} index - The name of the index containing the document to modify.
+   * @param {string} id    - The ID of the document to modify. 
+   * @param {object} doc   - The replacing document object.
+   */
+  modifyDocument(index, id, doc) {
+    return this.es.index({
+      index:   index,
+      id:      id,
+      body:    doc,
+      refresh: true
     });
   }
 
@@ -120,9 +125,9 @@ class Index {
    */
   removeDocument(index, id) {
     return this.es.delete({
-      index: record.dynamodb.Keys.site,
-      type:  record.dynamodb.NewImage.objectKey,
-      id:    record.dynamodb.NewImage.id
+      index:   record.dynamodb.Keys.site,
+      id:      record.dynamodb.NewImage.id,
+      refresh: true
     });
   }
 
@@ -138,18 +143,10 @@ class Index {
   createIndex(name, model) {
     return this.es.indices.create({
       index: name,
-      body: data
+      body:  model
     });
   }
-
-  /**
-   * Returns the appopriate model object containing
-   * settings & mapping for a specified index.
-   */ 
-  getIndexModel() {
-    return model;
-  }
-
+  
 }
 
 //** Expose this Index Class **//
