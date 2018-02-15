@@ -2,6 +2,8 @@
  * ViewLift API Library
  * Contains functions to perform common operations with the ViewLift API.
  *
+ * @requires request
+ *
  * @author Rob Mullins <rob@viewlift.com>
  * @version 1.0.0
  */
@@ -13,8 +15,9 @@ class ViewLift {
 
   /**
    * Constructor
-   * @param stage <string>    - The stage of the API to use - develop || prod.
-   * @param identity <string> - The identity to use for API requests - anonymous || server.
+   *
+   * @param {string} stage    - The stage of the API to use: develop || prod.
+   * @param {string} identity - The identity to use for API requests: anonymous || server.
    */
   constructor(stage, identity) {
     // Set the development stage:
@@ -36,21 +39,24 @@ class ViewLift {
   }
 
   /**
-   * GETS video metadata from VL API for specified video ID.
-   * @param site  <string> - The site hosting the content.
-   * @param id   <string>  - The video ID to retrieve metadata for.
-   * @return      <mixed>  - Object containing the video metadata.
+   * Gets video metadata from VL API for specified video ID.
+   *
+   * @param    {string} site - The site hosting the content.
+   * @param    {string} id   - The video ID to retrieve metadata for.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        The video metadata.
+   * @rejects  {RequestError}  Error making request to VL API.
    */
   getVideo(site, id) {
     const self = this;
-    return new Promise((resolve, reject) => {
+    return new Promise((fulfill, reject) => {
       if (!self.token) {
         self.generateToken(site)              // Generate API token if one not set.
           .then((token) => {
             self.token = token;               // Set token for this instance.
             self._getVideo(site, id)          // Make the Get Video request.
               .then(meta => {
-                resolve(meta);                // Return the video metadata.
+                fulfill(meta);                // Return the video metadata.
             }).catch(e => {
               console.log("Error getting video metadata from API - ", e);
               reject(e);                      // Error getting metadata, return error.
@@ -62,7 +68,7 @@ class ViewLift {
       } else {
         self._getVideo(site, id)              // Make the Get Video request.
           .then(meta => {
-            resolve(meta);                    // Return the video metadata.
+            fulfill(meta);                    // Return the video metadata.
         }).catch(e => {
           console.log("Error getting video metadata from API - ", e);
           reject(e);                          // Error getting metadata, return error.
@@ -74,15 +80,19 @@ class ViewLift {
 
 
   /**
-   * GETS video metadata from VL API for specified video ID.
+   * Gets video metadata from VL API for specified video ID.
    * Helper for getVideo().
-   * @param site  <string> - The site hosting the content.
-   * @param id    <string> - The video ID to retrieve metadata for.
-   * @return      <mixed>  - Object containing the video metadata.
+   *
+   * @param    {string} site - The site hosting the content.
+   * @param    {string} id   - The video ID to retrieve metadata for.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        Object containing the video metadata.
+   * @rejects  {RequestError}  Error making request to API.
+   * @rejects  {ParseError}    Error parsing the JSON API response.
    */
   _getVideo(site, id) {
     const self = this;
-    return new Promise((resolve, reject) => {
+    return new Promise((fulfill, reject) => {
       Request({
         url: 'https://' + self.stage + '-api.viewlift.com/content/videos',
         method: 'GET',
@@ -101,7 +111,7 @@ class ViewLift {
         } else {                                // Else request OK, parse metadata...
           try {                                 // Attempt to parse metadata from JSON...
             const meta = JSON.parse(body).records[0]
-            resolve(meta);                      // Return the metadata!
+            fulfill(meta);                      // Return the metadata!
           } catch (e) {
             console.log("Error parsing metadata from JSON for video %s - ", site, e);
             reject(res);                        // Return response info. 
@@ -112,9 +122,13 @@ class ViewLift {
   }
 
   /** 
-   * GETS API authorization token for a specified site by identity type.
-   * @param site <string> - The site requesting the token.
-   * @return Promise      - The site API authorization token, reject with error.
+   * Gets a API authorization token for a specified site by identity type.
+   *
+   * @param    {string} site - The site requesting the token.
+   * @return   {Promise.<string,Error>} 
+   * @fulfills {string}        The API authorization token.
+   * @rejects  {RequestError}  Error with API request.
+   * @rejects  {ParseError}    Error parsing the API JSON response.
    */
   generateToken(site) {
     if (!site) throw 'Site not defined.';
@@ -135,13 +149,18 @@ class ViewLift {
   }
 
   /** 
-   * GETS anonymous API authorization token for a specified site.
-   * @param site <string> - The site requesting the token.
-   * @return Promise      - The site API authorization token, reject with error.
+   * Gets anonymous API authorization token for a specified site.
+   * Helper for getAnonymousToken()
+   *
+   * @param    {string} site - The site requesting the token.
+   * @return   {Promise.<string,Error>} 
+   * @fulfills {string}        The anonymous API authorization token.
+   * @rejects  {RequestError}  Error with API request.
+   * @rejects  {ParseError}    Error parsing the API JSON response.
    */
   _getAnonymousToken(site) {
     const self = this;
-    return new Promise((resolve, reject) => {
+    return new Promise((fulfill, reject) => {
       Request({
         url: 'https://' + self.stage + '-api.viewlift.com/identity/anonymous-token',
         method: 'GET',
@@ -156,7 +175,7 @@ class ViewLift {
         } else {                                // Else request OK, parse auth token...
           try {                                 // Attempt to parse auth token from JSON...
             const token = JSON.parse(body).authorizationToken;
-            resolve(token);                     // Return the Auth Token!
+            fulfill(token);                     // Return the Auth Token!
           } catch (e) {
             console.log("Error parsing auth token from JSON for %s - ", site, e);
             reject(res);                        // Error - Return response info. 
@@ -167,13 +186,17 @@ class ViewLift {
   }
 
   /** 
-   * GETS server API authorization token for a specified site.
-   * @param site <string> - The site requesting the token.
-   * @return Promise      - The site API authorization token, reject with error.
+   * Gets a server API authorization token for a specified site.
+   *
+   * @param    {string} site  - The site requesting the token.
+   * @return   {Promise.<string,Error>} 
+   * @fulfills {string}         The server API authorization token.
+   * @rejects  {RequestError}   Error with API request.
+   * @rejects  {ParseError}     Error parsing the API JSON response.
    */
   _getServerToken(site) {
     const self = this;
-    return new Promise((resolve, reject) => {
+    return new Promise((fulfill, reject) => {
       Request({
         url: 'https://' + self.stage + '-api.viewlift.com/identity/server-token',
         method: 'GET',
@@ -188,7 +211,7 @@ class ViewLift {
         } else {                                // Else request OK, parse auth token...
           try {                                 // Attempt to parse auth token from JSON...
             const token = JSON.parse(body).authorizationToken;
-            resolve(token);                     // Return the Auth Token!
+            fulfill(token);                     // Return the Auth Token!
           } catch (e) {
             console.log("Error parsing auth token from JSON for %s - ", site, e);
             reject(res);                        // Error - Return response info. 
@@ -200,7 +223,7 @@ class ViewLift {
 
 }
 
-
+//** Expose this ViewLift Class **//
 module.exports = ViewLift;
 
 
