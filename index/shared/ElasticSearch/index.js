@@ -31,10 +31,11 @@ class Index {
   }
 
   /**
-   * Insert a new document into an idex.
+   * Inserts a new document into an idex, or update an existing one.
    * Creates the index if it doesn't already exist. 
    *
-   * @param    {string} index - The name of the index to insert the document.
+   * @param    {string} index - The name of the index to insert the document under.
+   * @param    {string} id.   - The document ID.
    * @param    {object} doc   - The document object to insert.
    * @return   {Promise.<boolean,Error>}
    * @fulfills {boolean}        Fulfills true on insert success.
@@ -84,29 +85,14 @@ class Index {
    * Inserts a new document into the specified index.
    * Helper for insertDocument()
    * 
-   * @param    {string} index - The name of the index to insert the document.
+   * @param    {string} index - The name of the index to insert the document under.
+   * @param    {string} id.   - The document ID.
    * @param    {object} doc   - The document object to insert.
    * @return   {Promise.<string,Error>}
    * @fulfills {string}         Response body from ES insert request.
    * @rejects  {Error}          An ES error.
    */
   _insertDocument(index, id, doc) {
-    return this.es.index({
-      index:   index,
-      id:      id,
-      body:    doc,
-      refresh: true
-    });
-  }
-
-  /**
-   * Modify an existing document in an existing index.
-   *
-   * @param {string} index - The name of the index containing the document to modify.
-   * @param {string} id    - The ID of the document to modify. 
-   * @param {object} doc   - The replacing document object.
-   */
-  modifyDocument(index, id, doc) {
     return this.es.index({
       index:   index,
       id:      id,
@@ -146,7 +132,7 @@ class Index {
       body:  model
     });
   }
-  
+
 }
 
 //** Expose this Index Class **//

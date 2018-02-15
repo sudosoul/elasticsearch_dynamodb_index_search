@@ -132,7 +132,7 @@ exports.handler = function(event, context, callback) {
     return new Promise((fulfill, reject) => {
       prepareDocument(record.dynamodb.NewImage.objectKey.S, record.dynamodb.Keys.id.S)
         .then(doc => {
-          esi.modifyDocument(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S, doc)
+          esi.insertDocument(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S, doc)
             .then(success => {
               fulfill(true);
           }).catch(e => {
