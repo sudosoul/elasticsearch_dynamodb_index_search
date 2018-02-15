@@ -35,8 +35,8 @@ exports.handler = function(event, context, callback) {
   *********************************************************************************************/
 
   // Instantiate VL API & ES Index Classes..
-  const api = new API(process.env.STAGE, 'server'); // Custom ViewLift API Class
-  const esi = new ESI(process.env.ES_ENDPOINT);     // Custom ElasticSearch Indexing Class
+  const api = new API(process.env.STAGE, 'server');                     // Custom ViewLift API Class
+  const esi = new ESI(process.env.ES_ENDPOINT, process.env.ES_VERSION); // Custom ElasticSearch Indexing Class
 
   //** Iterate through DynamoDB Events **//
   const processing = []; 

@@ -18,16 +18,28 @@ class Index {
    * Constructor
    *
    * @param {string} endpoint - The ElasticSearch host URL/Endpoint.
+   * @param {string} version  - The ES API Version to use.
    */
-  constructor(endpoint) {
+  constructor(endpoint, version) {
     // Set ES Endpoint:
     if (!endpoint) {
       throw 'Endpoint not provided.';
     } else {
       this.endpoint = endpoint;
     }
-    this.es = new ES.Client({host: this.endpoint, log: 'trace'}); // Initialize ES Client
-    this.model = model; 
+    // Set ES API Version:
+    if (!endpoint) {
+      throw 'Version not provided.';
+    } else {
+      this.version = version;
+    }
+    // Instantiate new ES Client:
+    this.es = new ES.Client({
+      host:         this.endpoint, 
+      log:          'trace',
+      apiVersion:   this.version
+      sniffOnStart: true
+    }); 
   }
 
   /**
@@ -50,7 +62,7 @@ class Index {
         .then(exists => {
           // Create index if it doesn't already exist:
           if (!exists) {
-            self.createIndex(es, record.dynamodb.Keys.site, self.model)
+            self.createIndex(es, record.dynamodb.Keys.site, model)
               .then(() => {
                 // Insert document into newly created index:
                 self._insertDocument(es, record)
