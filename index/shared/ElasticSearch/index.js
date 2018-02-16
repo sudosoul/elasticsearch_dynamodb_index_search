@@ -28,7 +28,7 @@ class Index {
       this.endpoint = endpoint;
     }
     // Set ES API Version:
-    if (!endpoint) {
+    if (!version) {
       throw 'Version not provided.';
     } else {
       this.version = version;
@@ -58,22 +58,22 @@ class Index {
     const self = this;
     return new Promise((fulfill, reject) => {
       // Check if index exists:
-      self.es.indices.exists(record.dynamodb.Keys.site)
+      self.es.indices.exists(index)
         .then(exists => {
           // Create index if it doesn't already exist:
           if (!exists) {
-            self.createIndex(record.dynamodb.Keys.site, model)
+            self.createIndex(index, model)
               .then(() => {
                 // Insert document into newly created index:
                 self._insertDocument(index, id, doc)
                   .then((success) => {
                     fulfill(true); // fulfill when complete!
                 }).catch(e => {
-                  console.log('Error inserting document %s', record.dynamodb.NewImage.id);
+                  console.log('Error inserting document %s', id);
                   reject(e);
                 });
             }).catch(e => {
-              console.log('Error creating index for %s.', record.dynamodb.Keys.site);
+              console.log('Error creating index for %s.', index);
               reject(e);
             });
           } else {
@@ -82,12 +82,12 @@ class Index {
               .then((success) => {
                 fulfill(true); // fulfill when complete!
             }).catch(e => {
-              console.log('Error inserting document %s', record.dynamodb.NewImage.id);
+              console.log('Error inserting document %s', id);
               reject(e);
             });
           }
       }).catch(e => {
-        console.log('Error checking if index exists for %s', record.dynamodb.Keys.site);
+        console.log('Error checking if index exists for %s', site);
         reject (e);   
       });
     });
@@ -123,8 +123,8 @@ class Index {
    */
   removeDocument(index, id) {
     return this.es.delete({
-      index:   record.dynamodb.Keys.site,
-      id:      record.dynamodb.NewImage.id,
+      index:   index,
+      id:      id,
       refresh: true
     });
   }
