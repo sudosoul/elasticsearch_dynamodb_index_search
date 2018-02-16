@@ -9,8 +9,8 @@
  */
 
 // Load Dependencies:
-const ES    = require('elasticsearch'); // ElasticSearch SDK
-const model = require('./model');       // Index Settings & Mappings
+const ES       = require('elasticsearch'); // ElasticSearch SDK
+const template = require('./template');    // Index Settings & Mappings
 
 class Index {
 
@@ -62,7 +62,7 @@ class Index {
         .then(exists => {
           // Create index if it doesn't already exist:
           if (!exists) {
-            self.createIndex(index, model)
+            self.createIndex(index, template)
               .then(() => {
                 // Insert document into newly created index:
                 self._insertDocument(index, id, doc)
@@ -132,13 +132,13 @@ class Index {
   /**
    * Creates a new index.
    *
-   * @param    {string} name  - The name of the index to create.
-   * @param    {object} model - Object containing the settings & mappings for the index.
+   * @param    {string} name     - The name of the index to create.
+   * @param    {object} template - Object containing the index template.
    * @return   {Promise.<string,Error>}
    * @fulfills {string}         Response body from ES delete request.
    * @rejects  {Error}          An ES Error.
    */
-  createIndex(name, model) {
+  createIndex(name, template) {
     return this.es.indices.create({
       index: name,
       body:  model

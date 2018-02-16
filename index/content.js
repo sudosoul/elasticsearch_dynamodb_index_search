@@ -179,6 +179,7 @@ exports.handler = function(event, context, callback) {
   }
 
   /**
+   * @todo define categories & tags in doc body
    * Prepare a video document object with data retrieve from VL API.
    * 
    * @param    {object} record - The DynamoDB Event Record.
@@ -193,16 +194,17 @@ exports.handler = function(event, context, callback) {
         .then(video => {
           // Define & Build Document Body:
           const doc = {
-            title:        video.gist.title,
-            type:         'content',
-            contentType:  'video',
-            url:          video.gist.permalink,
-            imageUrl:     video.contentDetails.videoImage.url || video.contentDetails.posterImage.url,
-            description:  video.gist.description,
-            runtime:      video.gist.runtime,
-            status:       video.contentDetails.status,
-            creditBlocks: video.creditBlocks,
-            isTrailer:    video.gist.isTrailer || false,
+            title:          video.gist.title,
+            suggest:        defineSuggestions(video.gist.title),
+            type:           'video',
+            description:    video.gist.description,
+            status:         video.contentDetails.status,
+            creditBlocks:   video.creditBlocks,
+            isTrailer:      video.gist.isTrailer || false,
+            free:           video.gist.free
+            year:           video.gist.year,
+            parentalRating: video.gist.parentalRating,
+            gist:           video.gist
           };
           // Fulfill with video document:
           fulfill(doc);
@@ -210,5 +212,15 @@ exports.handler = function(event, context, callback) {
         reject(e);
       });
     });
+  }
+
+  /**
+   * @todo
+   * Define the auto-suggest keywords.
+   * @param {string} title - The video title.
+   * @return {object} Object containing the suggestion definitions.
+   */
+  function defineSuggestions(title) {
+
   }
 } /****************************************************************************************/
