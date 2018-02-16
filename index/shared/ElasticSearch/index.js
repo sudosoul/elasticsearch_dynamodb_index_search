@@ -62,10 +62,10 @@ class Index {
         .then(exists => {
           // Create index if it doesn't already exist:
           if (!exists) {
-            self.createIndex(es, record.dynamodb.Keys.site, model)
+            self.createIndex(record.dynamodb.Keys.site, model)
               .then(() => {
                 // Insert document into newly created index:
-                self._insertDocument(es, record)
+                self._insertDocument(index, id, doc)
                   .then((success) => {
                     fulfill(true); // fulfill when complete!
                 }).catch(e => {
@@ -78,7 +78,7 @@ class Index {
             });
           } else {
             // Else Insert document into existing index:
-            self._insertDocument(es, record)
+            self._insertDocument(index, id, doc)
               .then((success) => {
                 fulfill(true); // fulfill when complete!
             }).catch(e => {
