@@ -31,7 +31,7 @@
         }
       ],
       "properties": {
-        "suggest": {
+        "suggest-title": {
           "type": "completion",
           "preserve_separators": false,
           "contexts": [
