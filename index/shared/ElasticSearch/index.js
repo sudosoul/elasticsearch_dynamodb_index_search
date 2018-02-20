@@ -37,7 +37,7 @@ class Index {
     this.es = new ES.Client({
       host:         this.endpoint, 
       log:          'trace',
-      apiVersion:   this.version
+      apiVersion:   this.version,
       sniffOnStart: true
     }); 
   }

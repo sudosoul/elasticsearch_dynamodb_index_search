@@ -31,7 +31,7 @@
         }
       ],
       "properties": {
-        "suggest-title": {
+        "suggestTitle": {
           "type": "completion",
           "preserve_separators": false,
           "contexts": [
@@ -60,7 +60,6 @@
         "title": {
           "type": "string", 
           "analyzer": "standard_stopwords-en"
-          }
         },
         "type": {
           "type": "keyword"
@@ -73,7 +72,10 @@
           "type": "keyword"
         },
         "categories": {
-          "type" "nested"
+          "type": "nested"
+        },
+        "tags": {
+          "type": "nested"
         },
         "status": {
           "type": "keyword"
@@ -94,5 +96,6 @@
           "type": "nested"
         }
       }
-    },
+    }
+  }
 }

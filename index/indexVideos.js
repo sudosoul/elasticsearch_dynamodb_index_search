@@ -203,7 +203,7 @@ exports.handler = function(event, context, callback) {
           // Define & Build Document Body:
           const doc = {
             title:           video.gist.title,
-            suggest-title:   defineTitleSuggestions(video.gist.title),
+            suggestTitle:   defineTitleSuggestions(video.gist.title),
             type:            'video',
             description:     video.gist.description,
             primaryCategory: video.gist.primaryCategory.title,
@@ -212,7 +212,7 @@ exports.handler = function(event, context, callback) {
             status:          video.contentDetails.status,
             person:          definePeople(video.creditBlocks),
             isTrailer:       video.gist.isTrailer || false,
-            free:            video.gist.free
+            free:            video.gist.free,
             year:            video.gist.year,
             parentalRating:  video.gist.parentalRating,
             gist:            video.gist
@@ -276,7 +276,7 @@ exports.handler = function(event, context, callback) {
    * prepares an array of objects containing the name of each
    * actor and directors found in the `creditBlocks`.
    *
-   * @param  {array} creditBlocks - The creditBlocks field returned from API.
+   * @param  {array} creditBlocks - The creditBlocks array returned from API.
    * @return {array} Array of objects containing name of each actor/director.
    */
   function definePeople(creditBlocks) {
@@ -293,7 +293,7 @@ exports.handler = function(event, context, callback) {
    * Parses the `categories` field returned from API and
    * prepares an array of objects containing the name of each category.
    *
-   * @param  {array} categories - The categories field returned from API.
+   * @param  {array} categories - The categories array returned from API.
    * @return {array} Array of objects containing name of each category.
    */
   function defineCategories(categories) {
@@ -302,6 +302,21 @@ exports.handler = function(event, context, callback) {
       _categories.push({name: category.title});
     });
     return _categories;
+  }
+
+  /**
+   * Parses the `tags` field returned from API and
+   * prepares an array of objects containing the name of each tag.
+   *
+   * @param  {array} tags - The tags array returned from API.
+   * @return {array} Array of objects containing name of each tag.
+   */
+  function defineCategories(tags) {
+    const _tags = [];
+    tags.forEach(tag => {
+      _tags.push({name: tag.title});
+    });
+    return _tags;
   }
 
 
