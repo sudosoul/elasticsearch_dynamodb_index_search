@@ -202,17 +202,20 @@ exports.handler = function(event, context, callback) {
         .then(video => {
           // Define & Build Document Body:
           const doc = {
-            title:          video.gist.title,
-            suggest-title:  defineTitleSuggestions(video.gist.title),
-            type:           'video',
-            description:    video.gist.description,
-            status:         video.contentDetails.status,
-            creditBlocks:   video.creditBlocks,
-            isTrailer:      video.gist.isTrailer || false,
-            free:           video.gist.free
-            year:           video.gist.year,
-            parentalRating: video.gist.parentalRating,
-            gist:           video.gist
+            title:           video.gist.title,
+            suggest-title:   defineTitleSuggestions(video.gist.title),
+            type:            'video',
+            description:     video.gist.description,
+            primaryCategory: video.gist.primaryCategory.title,
+            categories:      defineCategories(video.gist.categories),
+            tags:            defineTags(video.gist.tags),
+            status:          video.contentDetails.status,
+            person:          definePeople(video.creditBlocks),
+            isTrailer:       video.gist.isTrailer || false,
+            free:            video.gist.free
+            year:            video.gist.year,
+            parentalRating:  video.gist.parentalRating,
+            gist:            video.gist
           };
           // Fulfill with video document:
           fulfill(doc);
@@ -267,6 +270,41 @@ exports.handler = function(event, context, callback) {
     suggestions.push(title);  // Push the full/original title
     return suggestions;
   }
+
+  /**
+   * Parses the `creditBlocks` field returned from API and
+   * prepares an array of objects containing the name of each
+   * actor and directors found in the `creditBlocks`.
+   *
+   * @param  {array} creditBlocks - The creditBlocks field returned from API.
+   * @return {array} Array of objects containing name of each actor/director.
+   */
+  function definePeople(creditBlocks) {
+    const people = [];
+    creditBlocks.forEach(block => {
+      block.credits.forEach(credit => {
+        people.push({name: credit.title});
+      });
+    });
+    return people;
+  }
+
+  /**
+   * Parses the `categories` field returned from API and
+   * prepares an array of objects containing the name of each category.
+   *
+   * @param  {array} categories - The categories field returned from API.
+   * @return {array} Array of objects containing name of each category.
+   */
+  function defineCategories(categories) {
+    const _categories = [];
+    categories.forEach(category => {
+      _categories.push({name: category.title});
+    });
+    return _categories;
+  }
+
+
 } /****************************************************************************************/
 
 

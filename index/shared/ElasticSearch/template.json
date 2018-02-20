@@ -44,6 +44,16 @@
               "name": "categories",
               "type": "category",
               "path": "categories"
+            },
+            {
+              "name": "free",
+              "type": "category",
+              "path": "free"
+            },
+            {
+              "name": "year",
+              "type": "category",
+              "path": "year"
             }
           ]
         },
@@ -59,8 +69,14 @@
           "type": "text",
           "analyzer": "standard_stopwords-en"
         },
+        "primaryCategory": {
+          "type": "keyword"
+        },
+        "categories": {
+          "type" "nested"
+        },
         "status": {
-          "type": "text"
+          "type": "keyword"
         },
         "isTrailer": {
           "type": "boolean"
@@ -73,6 +89,9 @@
         },
         "parentalRating": {
           "type": "keyword"
+        },
+        "people": {
+          "type": "nested"
         }
       }
     },
