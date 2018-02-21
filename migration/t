@@ -1,0 +1,5 @@
+const a = null
+
+a.forEach(el => {
+  console.log('printing element');
+});

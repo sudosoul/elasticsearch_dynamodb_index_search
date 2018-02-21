@@ -49,9 +49,13 @@ exports.handler = function(event, context, callback) {
   //** Iterate through DynamoDB Events **//
   const processing = []; 
   event.Records.forEach(record => {
+    console.log(record);
     //** Perform Async Indexing & Push Promise to Array **// 
-    const type = record.dynamodb.NewImage.objectKey.S;
+    const type = record.dynamodb.NewImage ? record.dynamodb.NewImage.objectKey.S : record.dynamodb.OldImage.objectKey.S; // NewImage only exists on Insert/Modify events, OldImage must be used on Remove
     if (type === 'video') { // Only handle events with supported content type
+      console.log('******************************');
+      console.log(record.dynamodb);
+      console.log('******************************');
       processing.push(handleEvent(record)); 
     }
   });
@@ -59,6 +63,7 @@ exports.handler = function(event, context, callback) {
   //** Wait for all events to be processed, Regardless of success **//
   Promise.all(processing.map(p => p.catch(e => e)))
     .then(processed => {
+      console.log('All video records processed!');
       // Track Successful & Failed Events..
       let succeeded = 0;
       let failed    = 0;
@@ -74,7 +79,7 @@ exports.handler = function(event, context, callback) {
       // All events processed, end lambda execution..
       console.log('Successfully processed %d/%d events.', succeeded, total);
       console.log('Failed processing %d/%d events.', failed, total);
-      if (failed >= 0) {
+      if (failed > 0) {
         // Exit Lambda with FAILED status:
         return callback('There was an error processing ' +failed +' events!');
       } else {
@@ -114,9 +119,9 @@ exports.handler = function(event, context, callback) {
    */
   function _handleInsert(record) {
     return new Promise((fulfill, reject) => {
-      prepareDocument(record.dynamodb.NewImage.objectKey.S, record.dynamodb.Keys.id.S)
+      prepareVideoDocument(record)
         .then(doc => {
-          esi.insertDocument(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S, doc)
+          esi.insertDocument(record.dynamodb.Keys.site.S, 'videos', record.dynamodb.Keys.id.S, doc)
             .then(success => {
               fulfill(true);
           }).catch(e => {
@@ -138,9 +143,9 @@ exports.handler = function(event, context, callback) {
    */
   function _handleModify(record) {
     return new Promise((fulfill, reject) => {
-      prepareDocument(record.dynamodb.NewImage.objectKey.S, record.dynamodb.Keys.id.S)
+      prepareVideoDocument(record)
         .then(doc => {
-          esi.insertDocument(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S, doc)
+          esi.insertDocument(record.dynamodb.Keys.site.S, 'videos', record.dynamodb.Keys.id.S, doc)
             .then(success => {
               fulfill(true);
           }).catch(e => {
@@ -162,28 +167,13 @@ exports.handler = function(event, context, callback) {
    */
   function _handleRemove(record) {
     return new Promise((fulfill, reject) => {
-      esi.removeDocument(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S)
+      esi.removeDocument(record.dynamodb.Keys.site.S, 'videos', record.dynamodb.Keys.id.S)
         .then(success => {
           fulfill(true);
       }).catch(e => {
         reject(e);
       });
     });
-  }
-
-  /**
-   * Prepares the document body object for insert/modify events.
-   *
-   * @param    {object} record - The DynamoDB Event Record.
-   * @return   {Promise.<object,Error>} 
-   * @fulfills {object}          The document body object.
-   * @rejects  {Error}           A VL API Error.
-   */
-  function prepareDocument(record) {
-    switch (record.dynamodb.NewImage.objectKey.S) {
-      case 'video':
-        return _prepareVideoDocument(record);
-    }
   }
 
   /**
@@ -195,27 +185,29 @@ exports.handler = function(event, context, callback) {
    * @fulfills {object}          The document body object.
    * @rejects  {Error}           A VL API Error.
    */   
-  function _prepareVideoDocument(record) {
+  function prepareVideoDocument(record) {
     return new Promise((fulfill, reject) => {
       // Get Complete Video Data from API:
       api.getVideo(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S)
         .then(video => {
+          console.log('printing video');
+          console.log(video);
           // Define & Build Document Body:
           const doc = {
             title:           video.gist.title,
-            suggestTitle:   defineTitleSuggestions(video.gist.title),
+            suggestTitle:    defineTitleSuggestions(video.gist.title),
             type:            'video',
             description:     video.gist.description,
-            primaryCategory: video.gist.primaryCategory.title,
-            categories:      defineCategories(video.gist.categories),
-            tags:            defineTags(video.gist.tags),
+            primaryCategory: video.gist.primaryCategory ? video.gist.primaryCategory.title : null,
+            categories:      defineCategories(video.categories),
+            tags:            defineTags(video.tags),
             status:          video.contentDetails.status,
-            person:          definePeople(video.creditBlocks),
+            people:          video.creditBlocks ? definePeople(video.creditBlocks) : null,
             isTrailer:       video.gist.isTrailer || false,
             free:            video.gist.free,
             year:            video.gist.year,
-            parentalRating:  video.gist.parentalRating,
-            gist:            video.gist
+            parentalRating:  video.parentalRating,
+            data:            video
           };
           // Fulfill with video document:
           fulfill(doc);
@@ -311,7 +303,7 @@ exports.handler = function(event, context, callback) {
    * @param  {array} tags - The tags array returned from API.
    * @return {array} Array of objects containing name of each tag.
    */
-  function defineCategories(tags) {
+  function defineTags(tags) {
     const _tags = [];
     tags.forEach(tag => {
       _tags.push({name: tag.title});

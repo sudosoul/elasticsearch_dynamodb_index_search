@@ -36,7 +36,7 @@ class Index {
     // Instantiate new ES Client:
     this.es = new ES.Client({
       host:         this.endpoint, 
-      log:          'trace',
+      log:          'error',
       apiVersion:   this.version,
       sniffOnStart: true
     }); 
@@ -47,6 +47,7 @@ class Index {
    * Creates the index if it doesn't already exist. 
    *
    * @param    {string} index - The name of the index to insert the document under.
+   * @param    {string} type  - The document type.
    * @param    {string} id.   - The document ID.
    * @param    {object} doc   - The document object to insert.
    * @return   {Promise.<boolean,Error>}
@@ -54,7 +55,7 @@ class Index {
    * @rejects  {InsertError}    Error inserting the document.
    * @rejects  {IndexError}     Error creating an index. 
    */
-  insertDocument(index, id, doc) {
+  insertDocument(index, type, id, doc) {
     const self = this;
     return new Promise((fulfill, reject) => {
       // Check if index exists:
@@ -65,7 +66,7 @@ class Index {
             self.createIndex(index, template)
               .then(() => {
                 // Insert document into newly created index:
-                self._insertDocument(index, id, doc)
+                self._insertDocument(index, type, id, doc)
                   .then((success) => {
                     fulfill(true); // fulfill when complete!
                 }).catch(e => {
@@ -78,7 +79,7 @@ class Index {
             });
           } else {
             // Else Insert document into existing index:
-            self._insertDocument(index, id, doc)
+            self._insertDocument(index, type, id, doc)
               .then((success) => {
                 fulfill(true); // fulfill when complete!
             }).catch(e => {
@@ -98,15 +99,17 @@ class Index {
    * Helper for insertDocument()
    * 
    * @param    {string} index - The name of the index to insert the document under.
+   * @param    {string} type  - The document type.
    * @param    {string} id.   - The document ID.
    * @param    {object} doc   - The document object to insert.
    * @return   {Promise.<string,Error>}
    * @fulfills {string}         Response body from ES insert request.
    * @rejects  {Error}          An ES error.
    */
-  _insertDocument(index, id, doc) {
+  _insertDocument(index, type, id, doc) {
     return this.es.index({
       index:   index,
+      type:    type,
       id:      id,
       body:    doc,
       refresh: true
@@ -116,14 +119,16 @@ class Index {
   /**
    * Remove an existing document from the specified index.
    *
-   * @param  {string} index - The name of the index to insert the document.
-   * @return {Promise.<string,Error>}
+   * @param    {string} index - The name of the index to remove the document from.
+   * @param    {string} type  - The document type.
+   * @return   {Promise.<string,Error>}
    * @fulfills {string}       Response body from ES delete request.
    * @rejects  {Error}        An ES Error.
    */
-  removeDocument(index, id) {
+  removeDocument(index, type, id) {
     return this.es.delete({
       index:   index,
+      type:    type,
       id:      id,
       refresh: true
     });
@@ -141,7 +146,7 @@ class Index {
   createIndex(name, template) {
     return this.es.indices.create({
       index: name,
-      body:  model
+      body:  template
     });
   }
 

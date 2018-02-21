@@ -1,0 +1,20 @@
+const api = require('./api');
+
+const cb = api.creditBlocks;
+
+const p = definePeople(cb);
+console.log(p);
+
+
+
+
+
+function definePeople(creditBlocks) {
+    const people = [];
+    creditBlocks.forEach(block => {
+      block.credits.forEach(credit => {
+        people.push({name: credit.title});
+      });
+    });
+    return people;
+  }
