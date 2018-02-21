@@ -38,7 +38,6 @@ class Index {
       host:         this.endpoint, 
       log:          'debug',
       apiVersion:   this.version,
-      sniffOnStart: true,
       keepAlive:    false  // DO NOT CHANGE - LIBRARY CRASHSES WITHOUT THIS SET TO FALSE @see https://github.com/elastic/elasticsearch-js/issues/521 
     }); 
   }
