@@ -1,5 +1,6 @@
 node_modules/
 *.txt
 *.zip
-c
 creditBlocks.json
+testing/
+migration/

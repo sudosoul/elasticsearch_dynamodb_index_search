@@ -49,13 +49,9 @@ exports.handler = function(event, context, callback) {
   //** Iterate through DynamoDB Events **//
   const processing = []; 
   event.Records.forEach(record => {
-    console.log(record);
     //** Perform Async Indexing & Push Promise to Array **// 
     const type = record.dynamodb.NewImage ? record.dynamodb.NewImage.objectKey.S : record.dynamodb.OldImage.objectKey.S; // NewImage only exists on Insert/Modify events, OldImage must be used on Remove
     if (type === 'video') { // Only handle events with supported content type
-      console.log('******************************');
-      console.log(record.dynamodb);
-      console.log('******************************');
       processing.push(handleEvent(record)); 
     }
   });
@@ -190,8 +186,6 @@ exports.handler = function(event, context, callback) {
       // Get Complete Video Data from API:
       api.getVideo(record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S)
         .then(video => {
-          console.log('printing video');
-          console.log(video);
           // Define & Build Document Body:
           const doc = {
             title:           video.gist.title,

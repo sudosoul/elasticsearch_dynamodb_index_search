@@ -38,7 +38,8 @@ class Index {
       host:         this.endpoint, 
       log:          'error',
       apiVersion:   this.version,
-      sniffOnStart: true
+      sniffOnStart: true,
+      keepAlive:    false  // DO NOT CHANGE - LIBRARY CRASHSES WITHOUT THIS SET TO FALSE 
     }); 
   }
 
