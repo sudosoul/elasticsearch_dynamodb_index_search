@@ -36,10 +36,10 @@ class Index {
     // Instantiate new ES Client:
     this.es = new ES.Client({
       host:         this.endpoint, 
-      log:          'error',
+      log:          'debug',
       apiVersion:   this.version,
       sniffOnStart: true,
-      keepAlive:    false  // DO NOT CHANGE - LIBRARY CRASHSES WITHOUT THIS SET TO FALSE 
+      keepAlive:    false  // DO NOT CHANGE - LIBRARY CRASHSES WITHOUT THIS SET TO FALSE @see https://github.com/elastic/elasticsearch-js/issues/521 
     }); 
   }
 
@@ -60,7 +60,7 @@ class Index {
     const self = this;
     return new Promise((fulfill, reject) => {
       // Check if index exists:
-      self.es.indices.exists(index)
+      self.es.indices.exists({index: index})
         .then(exists => {
           // Create index if it doesn't already exist:
           if (!exists) {

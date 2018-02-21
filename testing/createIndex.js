@@ -8,16 +8,23 @@ const es = new ES.Client({
   log:          'error',
   apiVersion:   '6.0',
   sniffOnStart: true,
-  keepAlive: false
+  keepAlive:    false
 }); 
 
 
-createIndex('testing', template)
+// createIndex('testing', template)
+//   .then(res => {
+//     console.log('success - ', res);
+// }).catch(e => {
+//   console.log(e);
+// })
+
+es.indices.exists({index: 'testing1'})
   .then(res => {
-    console.log('success - ', res);
+    console.log('Success - ', res);
 }).catch(e => {
-  console.log(e);
-})
+  console.log('Error - ', e);
+});
 
 
 
