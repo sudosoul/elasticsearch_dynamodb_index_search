@@ -81,10 +81,10 @@
           "type": "keyword"
         },
         "isTrailer": {
-          "type": "boolean"
+          "type": "keyword"
         },
         "free": {
-          "type": "boolean"
+          "type": "keyword"
         },
         "year": {
           "type": "keyword"
