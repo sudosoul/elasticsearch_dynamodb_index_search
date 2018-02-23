@@ -72,10 +72,20 @@
           "type": "keyword"
         },
         "categories": {
-          "type": "nested"
+          "type": "nested",
+          "properties": {
+            "name": {
+              "type": "text"
+            }
+          }
         },
         "tags": {
-          "type": "nested"
+          "type": "nested",
+          "properties": {
+            "name": {
+              "type": "text"
+            }
+          }
         },
         "status": {
           "type": "keyword"
@@ -93,7 +103,22 @@
           "type": "keyword"
         },
         "people": {
-          "type": "nested"
+          "type": "nested",
+          "properties": {
+            "name": {
+              "type": "text"
+            }
+          }
+        }
+      }
+    },
+    "people": {
+      "properties": {
+        "suggestName": {
+          "type": "completion"
+        },
+        "name": {
+          "type": "text"
         }
       }
     }

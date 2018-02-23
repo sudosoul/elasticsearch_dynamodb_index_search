@@ -56,23 +56,18 @@ class Index {
    * @rejects  {IndexError}     Error creating an index. 
    */
   insertDocument(index, type, id, doc) {
-    console.log('ES: insertDocument() - index:%s // type:%s // id:%s');
     const self = this;
     return new Promise((fulfill, reject) => {
       // Check if index exists:
-      console.log('Checking if index exists...');
       self.es.indices.exists({index: index})
         .then(exists => {
           // Create index if it doesn't already exist:
           if (!exists) {
-            console.log('Index does not already exist. Creating it...');
             self.createIndex(index, template)
               .then((res) => {
-                console.log('Index created, inserting document....');
                 // Insert document into newly created index:
                 self._insertDocument(index, type, id, doc)
                   .then((success) => {
-                    console.log('Document inserted!');
                     fulfill(true); // fulfill when complete!
                 }).catch(e => {
                   console.log('Error inserting document %s', id);
@@ -83,11 +78,9 @@ class Index {
               reject(e);
             });
           } else {
-            console.log('Index exists. Inserting document...');
             // Else Insert document into existing index:
             self._insertDocument(index, type, id, doc)
               .then((success) => {
-                console.log('Document inserted!');
                 fulfill(true); // fulfill when complete!
             }).catch(e => {
               console.log('Error inserting document %s', id);

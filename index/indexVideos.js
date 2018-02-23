@@ -74,7 +74,7 @@ exports.handler = function(event, context, callback) {
       });
       // All events processed, end lambda execution..
       console.log('Successfully processed %d/%d events.', succeeded, total);
-      console.log('Failed processing %d/%d events.', failed, total);
+      failed ? console.log('Failed processing %d/%d events.', failed, total) : null;
       if (failed > 0) {
         // Exit Lambda with FAILED status:
         return callback('There was an error processing ' +failed +' events!');

@@ -15,13 +15,13 @@ Source
 
 function processItems(err, items) {
   const processing = [];
-  for (let x=0; x<5; x++) {
-    processing.push(migrate(items.Items[x]));
-  }
+  items.Items.forEach(item => {
+    processing.push(migrate(item));
+  });
   Promise.all(processed => {
-    console.log('successfully migrated');
+    //console.log('successfully migrated');
   }).catch(e => {
-    console.log('error migrating - ', e);
+    //console.log('error migrating - ', e);
   });
 }
 
@@ -33,6 +33,7 @@ function migrate(item) {
     id: item.get('id'),
     objectKey: item.get('objectKey'),
   };
+  console.log(item.get('title'));
   return new Promise((resolve, reject) => {
     Destination.create(data, (err, res) => {
       if (err) {
@@ -66,7 +67,7 @@ function getDestinationTable() {
       objectKey: Joi.string()
     }
   });
-  Meta.config({tableName: 'DEVELOP.CONTENT.CONTENT_METADATA_3'});
+  Meta.config({tableName: 'DEVELOP.CONTENT.CONTENT_METADATA_INDEX-DEMO3'});
   return Meta;
 }
 

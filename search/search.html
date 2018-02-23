@@ -1,18 +1,87 @@
 <html>
   <head>
+    <!-- Load CSS -->
+    <link rel="stylesheet" href="css/styles.css">
     <!-- Load JS Dependencies -->
     <script src="bower_components/elasticsearch/elasticsearch.min.js"></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="search.js"></script>
-
-    <title> Search Demo </title>
+    <script src="js/search.js"></script>
+    <title> HoiChoi Search Demo </title>
   </head>
   <body>
-    <h1> Search Demo </h1>
+    <div class="search_container">
+      <h1 style="margin-left: 15%"> HoiChoi Search Demo </h1>
+      <input id="search" type="text"/> <button id="submitSearch">Search!</button>
+    </div>
+  
+    <div class="results">
+      <div class="suggestions">
+        <h2> Suggestions </h2>
+        <div id="suggestion_results"></div>
+      </div>
+      <div class="searches">
+        <h2> Search Result </h2>
+        <div id="search_result"></div>
+      </div>
+    </div>
+    <div style="clear: both;"></div>
+    <div class="similar_results">
+      <h2> Similar Results </h2>
+      <div id="similar_result"></div>
+    </div>
+  
   </body>
 
   <script>
-    const client = new Search();
-    console.log(client);
+    const search = new Search();
+    
+    //*** Auto Suggest **//
+    $('#search').on('change input', function() {
+      $('#suggestion_results').empty();
+      search.suggestVideoTitle($('#search').val())
+        .then(suggestions => {
+          suggestions.forEach(suggestion => {
+            $('#suggestion_results').append('<p class="suggestion">' +suggestion.text +'</p>');
+          });
+      });
+    });
+
+    //** Select Suggestion **//
+    $('#suggestion_results').on('click', 'p', function() {
+      $('#search').val($(this).text());
+    });
+
+    //** Search **//
+    $('#submitSearch').click(function() {
+      $('#search_result').empty();
+      $('#similar_result').empty();
+      search.searchVideos($('#search').val())
+        .then(results => {
+          fillSearchResult(results[0]);
+          for (let x=1; x<results.length; x++) {
+            fillSimilarResults(results[x]);
+          }
+      }).catch(e => {
+        console.error(e);
+      });
+    });
+
+    function fillSearchResult(result) {
+      let html = "<p class='key'>Title: </p><p class='value'>" +result._source.title +"</p>";
+      html = html +"<p class='key'>Description: </p><p class='value'>" +result._source.description +"</p>";
+      html = html +"<p class='key'>Category: </p><p class='value'>" +result._source.primaryCategory +"</p>";
+      html = html +"<p class='key'>Year: </p><p class='value'>" +result._source.year +"</p>";
+      $('#search_result').append(html);
+    }
+
+    function fillSimilarResults(result) {
+      $('#similar_result').append("<p>" +result._source.title +"</p>");
+    }
+
+
+    
   </script>
 </html>
+
+
+
