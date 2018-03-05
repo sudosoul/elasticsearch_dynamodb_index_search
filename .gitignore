@@ -4,5 +4,5 @@ node_modules/
 *.json
 testing/
 migration/
-
+.DS_Store
 !package.json
