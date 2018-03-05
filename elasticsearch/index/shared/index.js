@@ -150,6 +150,10 @@ class Index {
     });
   }
 
+  reindex() {
+    return this.es.reindex({refresh: true, body: template});
+  }
+
 }
 
 //** Expose this Index Class **//

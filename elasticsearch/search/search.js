@@ -76,43 +76,38 @@ class Search {
    * @rejects {Error}  Rejects if error performing the search query (NOT IF NO RESULTS FOUND).
    */ 
   suggestVideos(searchTerm, showTrailers) {
-    const self = this;
-    return new Promise((fulfill, reject) => {
-      self.es.search({
-        index: self.index
-        body: {
-          query: {
-            bool: {
-              must: {
-                multi_match: {
-                  query: searchTerm,
-                  type: 'best_fields',
-                  fields: ['title^10', 'categories^8', 'people^6', 'tags^2']
+    return this.es.search({
+      index: self.index,
+      body: {
+        query: {
+          bool: {
+            must: {
+              multi_match: {
+                query: searchTerm,
+                type: 'best_fields',
+                fields: ['title^10', 'categories^8', 'people^6', 'tags^2']
+              }
+            },
+            filter:[
+              {
+                term: {
+                  isTrailer: showTrailers
                 }
-              },
-              filter:[
-                {
-                  term: {
-                    isTrailer: showTrailers
-                  }
-                }, 
-                {
-                  term: {
-                    status: 'open'
-                  }   
-                }
-              ]
-            }
+              }, 
+              {
+                term: {
+                  status: 'open'
+                }   
+              }
+            ]
           }
         }
-      }, (err, res) => {
-        if (err) return reject(err);
-        fulfill(res);
-      });
+      }
     });
   }
 
 }
 
-
+// Expose this Class
+module.exports = Search;
 

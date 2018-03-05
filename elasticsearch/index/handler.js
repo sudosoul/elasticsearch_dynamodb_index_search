@@ -13,7 +13,6 @@
  *  STAGE           - The development stage (dev, staging, prod).
  *  ES_ENDPOINT     - The URL endpoint to the ElasticSearch cluster.
  *  ES_VERSION      - The version of ElasticSearch used on our cluster.
- *  ES_SUGGEST_SKIP - Comma separated string including the words to skip (a,the,of,in).
  *  
  *
  * @requires api.js
@@ -46,10 +45,10 @@ exports.handler = function(event, context, callback) {
   const processing = []; 
   event.Records.forEach(record => {
     //** Index According to Table **//
-    const table = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,''); // Get Table Name from ARN
+    const table = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,'');; // Get Table Name from ARN
     switch (table) {
       // Index Content Data:
-      case 'DEVELOP.CONTENT.CONTENT_METADATA_INDEX-DEMO3':
+      case 'DEVELOP.CONTENT.CONTENT_METADATA_INDEX-DEMO8':
         processing.push(content.index(record));
         break;
       

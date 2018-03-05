@@ -50,51 +50,35 @@ class ViewLift {
   getVideo(site, id) {
     const self = this;
     return new Promise((fulfill, reject) => {
-      if (!self.token) {
-        self.generateToken(site)              // Generate API token if one not set.
-          .then((token) => {
-            setToken(token);               // Set token for this instance.
-            self._getVideo(site, id)          // Make the Get Video request.
-              .then(meta => {
-                fulfill(meta);                // Return the video metadata.
-            }).catch(e => {
-              console.log("Error getting video metadata from API - ", e);
-              reject(e);                      // Error getting metadata, return error.
-            });
-        }).catch(e => {
-          console.log("Error getting API token for site %s - ", site, e);
-          reject(e);                          // Error getting VL API token, return error.
-        });
-      } else {
-        self._getVideo(site, id)              // Make the Get Video request.
-          .then(meta => {
-            fulfill(meta);                    // Return the video metadata.
-        }).catch(e => {
-          console.log("Error getting video metadata from API - ", e);
-          reject(e);                          // Error getting metadata, return error.
-        });
-      }
+      self.generateToken(site)              // Generate API token 
+        .then((token) => {
+          self._getVideo(site, id, token)   // Make the Get Video request.
+            .then(meta => {
+              fulfill(meta);                // Return the video metadata.
+          }).catch(e => {
+            console.log("Error getting video metadata from API - ", e);
+            reject(e);                      // Error getting metadata, return error.
+          });
+      }).catch(e => {
+        console.log("Error getting API token for site %s - ", site, e);
+        reject(e);                          // Error getting VL API token, return error.
+      });
     });
   }
-
-  setToken(token) {
-    this.token = token;
-  }
-
-
 
   /**
    * Gets video metadata from VL API for specified video ID.
    * Helper for getVideo().
    *
-   * @param    {string} site - The site hosting the content.
-   * @param    {string} id   - The video ID to retrieve metadata for.
+   * @param    {string} site  - The site hosting the content.
+   * @param    {string} id    - The video ID to retrieve metadata for.
+   * @param    {string} token - The ViewLift API token.
    * @return   {Promise.<object,Error>} 
    * @fulfills {object}        Object containing the video metadata.
    * @rejects  {RequestError}  Error making request to API.
    * @rejects  {ParseError}    Error parsing the JSON API response.
    */
-  _getVideo(site, id) {
+  _getVideo(site, id, token) {
     const self = this;
     return new Promise((fulfill, reject) => {
       Request({
@@ -104,7 +88,7 @@ class ViewLift {
           site: site, 
           ids:  id
         },
-        headers: { 'Authorization': self.token }
+        headers: { 'Authorization': token }
       }, (err, res, body) => {
         if (err) {                              // If internal error making HTTP request...
           console.log("Internal Error getting meta for video: %s - ", id, err);
@@ -117,7 +101,7 @@ class ViewLift {
             const meta = JSON.parse(body).records[0]
             fulfill(meta);                      // Return the metadata!
           } catch (e) {
-            console.log("Error parsing metadata from JSON for video %s - ", site, e);
+            console.log("Error parsing metadata from JSON for video %s - ", id, e);
             reject(res);                        // Return response info. 
           }
         }

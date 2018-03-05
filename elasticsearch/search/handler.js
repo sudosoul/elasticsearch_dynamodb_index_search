@@ -32,9 +32,34 @@ exports.handler = function(event, context, callback) {
   // Perform Suggest Video Search:
   search.suggestVideos(event.queryStringParameters.searchTerm, event.queryStringParameters.showTrailers || false)
     .then(results => {
+      // Push just the data of the results into `result` array:
+      const result = [];
+      for (let key in results.hits.hits) {
+        if (results.hits.hits.hasOwnProperty(key)) {
+          if(results.hits.hits[key]._source._row) {
+            result.push(JSON.parse(results.hits.hits[key]._source._row));
+          }
+        }
+      }
+      return callback(null, prepareResponse(200, result));
+  }).catch(e => {
+    console.log('Error - ', e);
+    return callback(e);
+  });
 
-    })
 
+  /**
+   * Prepares & Formats the Lamdba HTTP Response
+   * @param {number} statusCode - The HTTP response code.
+   * @param {array}  body       - JSON response object.
+   * @return {object}           - Lambda formatted Response.
+   */
+  function prepareResponse(statusCode, body) {
+    return {
+      statusCode      : statusCode,
+      body            : JSON.stringify(body), 
+      isBase64Encoded : false
+    };
+  }
 
 }
-
