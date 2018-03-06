@@ -39,7 +39,7 @@ class Videos extends Index {
    */
   constructor() {
     super(process.env.ES_ENDPOINT, process.env.ES_VERSION);
-    this.api = new API(process.env.STAGE, 'server');
+    this.api = new API(process.env.STAGE, 'anonymous');
   }
 
   /**

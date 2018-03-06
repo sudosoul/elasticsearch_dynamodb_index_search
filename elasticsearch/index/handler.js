@@ -38,6 +38,11 @@ const Content = require('./Content/content');
  * @param {object|string} success - Optional JSON.stringify compatible object or string to indicate Lambda success.
  */
 exports.handler = function(event, context, callback) {
+  //** Ensure all Environment Variables Set **//
+  if (!process.env.STAGE || !process.env.ES_ENDPOINT || !process.env.ES_VERSION) {
+    console.log('Error - environment variables not set. Required environment variables are STAGE, ES_ENDPOINT, and ES_VERSION');
+    return callback('Not all required environment variables were set.');
+  }
   //** Instantiate required classes **//
   const content = new Content(); 
 
