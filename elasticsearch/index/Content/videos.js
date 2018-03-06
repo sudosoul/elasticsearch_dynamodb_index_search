@@ -104,7 +104,7 @@ class Videos extends Index {
             categories:      self._defineCategories(video.categories),
             tags:            self._defineTags(video.tags),
             status:          video.contentDetails.status,
-            people:          video.creditBlocks ? self._definePeople(video.creditBlocks) : null,
+            people:          Object.keys(video.creditBlocks).length > 0 ? self._definePeople(video.creditBlocks) : null,
             isTrailer:       video.gist.isTrailer || false,
             free:            video.gist.free,
             year:            video.gist.year,
