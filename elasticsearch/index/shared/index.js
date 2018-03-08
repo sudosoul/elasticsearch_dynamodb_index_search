@@ -63,7 +63,7 @@ class Index {
         .then(exists => {
           // Create index if it doesn't already exist:
           if (!exists) {
-            self.createIndex(index, template)
+            self._createIndex(index, template)
               .then((res) => {
                 // Insert document into newly created index:
                 self._insert(index, type, id, doc)
@@ -88,7 +88,7 @@ class Index {
             });
           }
       }).catch(e => {
-        console.log('Error checking if index exists for %s', site);
+        console.log('Error checking if index exists for %s', index);
         reject (e);   
       });
     });

@@ -1,0 +1,115 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 2,
+      "number_of_replicas": 2,
+      "shard": {
+        "check_on_startup": true
+      },
+      "routing_partition_size": 1,
+      "auto_expand_replicas": "0-all"
+    },
+    "analysis": {
+      "analyzer": {
+        "nGram_analyzer": {
+          "type": "custom",
+          "tokenizer": "whitespace",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "nGram_filter"
+          ]
+        },
+        "standard_stopwords-en": {
+          "type": "standard",
+          "stopwords": "_english_"
+        }
+      },
+      "filter": {
+        "nGram_filter": {
+          "type": "nGram",
+          "min_gram": 1,
+          "max_gram": 20,
+          "token_chars": [
+            "letter",
+            "digit",
+            "punctuation",
+            "symbol"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "videos": {
+      "properties": {
+        "title": {
+          "type": "text", 
+          "index_analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "description": {
+          "type": "text",
+          "index_analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "primaryCategory": {
+          "type": "keyword",
+          "index_analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "categories": {
+          "type": "nested",
+          "index_analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en",
+          "properties": {
+            "name": {
+              "type": "text"
+            }
+          }
+        },
+        "tags": {
+          "type": "nested",
+          "index_analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en",
+          "properties": {
+            "name": {
+              "type": "text"
+            }
+          }
+        },
+        "status": {
+          "type": "keyword"
+        },
+        "isTrailer": {
+          "type": "keyword"
+        },
+        "free": {
+          "type": "keyword"
+        },
+        "year": {
+          "type": "keyword"
+        },
+        "parentalRating": {
+          "type": "keyword"
+        },
+        "people": {
+          "type": "nested",
+          "index_analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en",
+          "properties": {
+            "name": {
+              "type": "text"
+            }
+          }
+        },
+        "gist": {
+          "index": "no"
+        }
+      }
+    }
+  }
+}
