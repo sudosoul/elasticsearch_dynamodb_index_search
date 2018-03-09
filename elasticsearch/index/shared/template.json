@@ -13,11 +13,10 @@
       "analyzer": {
         "nGram_analyzer": {
           "type": "custom",
-          "tokenizer": "whitespace",
+          "tokenizer": "nGram_tokenizer",
           "filter": [
             "lowercase",
-            "asciifolding",
-            "nGram_filter"
+            "asciifolding"
           ]
         },
         "standard_stopwords-en": {
@@ -25,16 +24,14 @@
           "stopwords": "_english_"
         }
       },
-      "filter": {
-        "nGram_filter": {
-          "type": "nGram",
+      "tokenizer": {
+        "nGram_tokenizer": {
+          "type": "ngram",
           "min_gram": 1,
           "max_gram": 20,
           "token_chars": [
             "letter",
-            "digit",
-            "punctuation",
-            "symbol"
+            "digit"
           ]
         }
       }
