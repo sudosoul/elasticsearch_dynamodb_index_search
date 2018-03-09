@@ -107,7 +107,8 @@
           "type": "keyword"
         },      
         "gist": {
-          "index": "no"
+          "type": "object",
+          "index": false
         }
       }
     }
