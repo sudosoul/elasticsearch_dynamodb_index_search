@@ -131,9 +131,11 @@ class Videos extends Index {
     console.log('printing creditBlocks - ', creditBlocks);
     const people = [];
     creditBlocks.forEach(block => {
-      block.credits.forEach(credit => {
-        people.push({name: credit.title});
-      });
+      if (block.credits) {
+        block.credits.forEach(credit => {
+          people.push({name: credit.title});
+        });
+      }
     });
     return people;
   }
