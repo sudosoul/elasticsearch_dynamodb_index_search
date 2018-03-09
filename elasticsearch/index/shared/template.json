@@ -108,7 +108,7 @@
         },      
         "gist": {
           "type": "object",
-          "index": false
+          "enabled": false
         }
       }
     }
