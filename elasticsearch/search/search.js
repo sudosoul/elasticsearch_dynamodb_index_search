@@ -76,6 +76,7 @@ class Search {
    * @rejects {Error}  Rejects if error performing the search query (NOT IF NO RESULTS FOUND).
    */ 
   suggestVideos(searchTerm, showTrailers) {
+    const self = this;
     return this.es.search({
       index: self.index,
       body: {
