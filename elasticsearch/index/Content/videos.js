@@ -128,6 +128,7 @@ class Videos extends Index {
    * @return {array} Array of objects containing name of each actor/director.
    */
   _definePeople(creditBlocks) {
+    console.log('printing creditBlocks - ', creditBlocks);
     const people = [];
     creditBlocks.forEach(block => {
       block.credits.forEach(credit => {

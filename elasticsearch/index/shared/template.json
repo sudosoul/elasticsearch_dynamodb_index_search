@@ -62,22 +62,32 @@
           "search_analyzer": "standard_stopwords-en"
         },
         "categories": {
-          "type": "nested",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
+          "type": "nested",  
           "properties": {
             "name": {
-              "type": "text"
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
+        "people": {
+          "type": "nested",
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
             }
           }
         },
         "tags": {
           "type": "nested",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
           "properties": {
             "name": {
-              "type": "text"
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
             }
           }
         },
@@ -95,17 +105,7 @@
         },
         "parentalRating": {
           "type": "keyword"
-        },
-        "people": {
-          "type": "nested",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
-          "properties": {
-            "name": {
-              "type": "text"
-            }
-          }
-        },
+        },      
         "gist": {
           "index": "no"
         }

@@ -53,7 +53,7 @@ exports.handler = function(event, context, callback) {
     const table = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,''); // Get Table Name from ARN
     switch (table) {
       // Index Content Data:
-      case 'DEVELOP.CONTENT.CONTENT_METADATA_INDEX-DEMO9':
+      case 'DEVELOP.CONTENT.CONTENT_METADATA_INDEX-DEMO1':
         processing.push(content.index(record));
         break;
       
