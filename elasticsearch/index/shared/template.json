@@ -45,7 +45,7 @@
       "properties": {
         "title": {
           "type": "text", 
-          "index_analyzer": "nGram_analyzer",
+          "analyzer": "nGram_analyzer",
           "search_analyzer": "standard_stopwords-en"
         },
         "type": {
@@ -53,17 +53,17 @@
         },
         "description": {
           "type": "text",
-          "index_analyzer": "nGram_analyzer",
+          "analyzer": "nGram_analyzer",
           "search_analyzer": "standard_stopwords-en"
         },
         "primaryCategory": {
           "type": "keyword",
-          "index_analyzer": "nGram_analyzer",
+          "analyzer": "nGram_analyzer",
           "search_analyzer": "standard_stopwords-en"
         },
         "categories": {
           "type": "nested",
-          "index_analyzer": "nGram_analyzer",
+          "analyzer": "nGram_analyzer",
           "search_analyzer": "standard_stopwords-en",
           "properties": {
             "name": {
@@ -73,7 +73,7 @@
         },
         "tags": {
           "type": "nested",
-          "index_analyzer": "nGram_analyzer",
+          "analyzer": "nGram_analyzer",
           "search_analyzer": "standard_stopwords-en",
           "properties": {
             "name": {
@@ -98,7 +98,7 @@
         },
         "people": {
           "type": "nested",
-          "index_analyzer": "nGram_analyzer",
+          "analyzer": "nGram_analyzer",
           "search_analyzer": "standard_stopwords-en",
           "properties": {
             "name": {

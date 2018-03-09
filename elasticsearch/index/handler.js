@@ -23,7 +23,7 @@
  */
 
 // Import Dependencies:
-const Content = require('./Content/content'); 
+const Content = require('./Content/content');
 
 /**
  * Lambda Entry Point
@@ -50,10 +50,10 @@ exports.handler = function(event, context, callback) {
   const processing = []; 
   event.Records.forEach(record => {
     //** Index According to Table **//
-    const table = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,'');; // Get Table Name from ARN
+    const table = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,''); // Get Table Name from ARN
     switch (table) {
       // Index Content Data:
-      case 'DEVELOP.CONTENT.CONTENT_METADATA_INDEX-DEMO8':
+      case 'DEVELOP.CONTENT.CONTENT_METADATA_INDEX-DEMO9':
         processing.push(content.index(record));
         break;
       
@@ -92,4 +92,4 @@ exports.handler = function(event, context, callback) {
       }
   }); 
 
-}
+};

@@ -102,7 +102,7 @@ class ViewLift {
             fulfill(meta);                      // Return the metadata!
           } catch (e) {
             console.log("Error parsing metadata from JSON for video %s - ", id, e);
-            reject(res);                        // Return response info. 
+            reject(body);                        // Return response info. 
           }
         }
       });
