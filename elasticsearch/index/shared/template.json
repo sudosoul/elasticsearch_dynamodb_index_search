@@ -57,9 +57,14 @@
           "search_analyzer": "standard_stopwords-en"
         },
         "primaryCategory": {
-          "type": "keyword",
+          "type": "text",
           "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "search_analyzer": "standard_stopwords-en",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
         },
         "categories": {
           "type": "nested",  
