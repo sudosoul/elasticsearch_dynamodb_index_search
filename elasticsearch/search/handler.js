@@ -34,12 +34,10 @@ exports.handler = function(event, context, callback) {
     .then(results => {
       // Push just the data of the results into `result` array:
       const result = [];
-      for (let key in results.hits.hits) {
-        if (results.hits.hits.hasOwnProperty(key)) {
-          if(results.hits.hits[key]._source._row) {
-            result.push(JSON.parse(results.hits.hits[key]._source._row));
-          }
-        }
+      if (results.hits.hits.length > 0) {
+        results.hits.hits.forEach(hits => {
+          result.push(hits._source);
+        });
       }
       return callback(null, prepareResponse(200, result));
   }).catch(e => {
