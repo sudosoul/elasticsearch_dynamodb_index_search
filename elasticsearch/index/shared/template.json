@@ -15,8 +15,7 @@
           "type": "custom",
           "tokenizer": "nGram_tokenizer",
           "filter": [
-            "lowercase",
-            "asciifolding"
+            "lowercase"
           ]
         },
         "standard_stopwords-en": {

@@ -109,7 +109,7 @@ class Videos extends Index {
             free:            video.gist.free,
             year:            video.gist.year,
             parentalRating:  video.parentalRating,
-            data:            video
+            gist:            video.gist
           };
           // Fulfill with video document:
           fulfill(doc);
@@ -128,7 +128,6 @@ class Videos extends Index {
    * @return {array} Array of objects containing name of each actor/director.
    */
   _definePeople(creditBlocks) {
-    console.log('printing creditBlocks - ', creditBlocks);
     const people = [];
     creditBlocks.forEach(block => {
       if (block.credits) {
