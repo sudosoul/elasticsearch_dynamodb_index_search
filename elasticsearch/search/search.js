@@ -86,7 +86,8 @@ class Search {
               multi_match: {
                 query: searchTerm,
                 type: 'best_fields',
-                fields: ['title^10', 'categories^8', 'people^6', 'tags^2']
+                fields: ['title^10', 'categories^8', 'people^6', 'tags^2'],
+                analyzer: 'nGram_analyzer'
               }
             },
             filter:[
