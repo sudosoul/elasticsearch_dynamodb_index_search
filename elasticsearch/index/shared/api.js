@@ -98,7 +98,7 @@ class ViewLift {
           reject(res);                          // Return response info.
         } else {                                // Else request OK, parse metadata...
           try {                                 // Attempt to parse metadata from JSON...
-            const meta = JSON.parse(body).records[0]
+            const meta = JSON.parse(body).records[0];
             fulfill(meta);                      // Return the metadata!
           } catch (e) {
             console.log("Error parsing metadata from JSON for video %s - ", id, e);
@@ -123,16 +123,12 @@ class ViewLift {
     switch (this.identity) {
       case 'anonymous':
         return this._getAnonymousToken(site);
-        break;
       case 'anon':
         return this._getAnonymousToken(site);
-        break;
       case 'server':
         return this._getServerToken(site);
-        break;
       default:
         return this._getAnonymousToken(site);
-        break;
     }
   }
 

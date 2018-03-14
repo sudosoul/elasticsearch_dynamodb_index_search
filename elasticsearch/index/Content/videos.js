@@ -67,7 +67,7 @@ class Videos extends Index {
             });
         }).catch(e => {
           reject(e);                              // Error preparing document!
-        })      
+        });      
       //** Remove Document **//
       } else if (action === 'REMOVE') {
         self.remove(site, 'videos', id, doc)      // Remove the document
@@ -96,6 +96,7 @@ class Videos extends Index {
       self.api.getVideo(site, id)
         .then(video => {
           // Define & Build Document Body:
+          delete video.streamingInfo; // Remove streaming info from video data.
           const doc = {
             title:           video.gist.title,
             type:            'video',

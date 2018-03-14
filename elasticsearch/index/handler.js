@@ -67,7 +67,7 @@ exports.handler = function(event, context, callback) {
   //** Wait for all events to be processed, Regardless of success **//
   Promise.all(processing.map(p => p.catch(e => e)))
     .then(processed => {
-      console.log('All video records processed!');
+      console.log('All records processed!');
       // Track Successful & Failed Events..
       let succeeded = 0;
       let failed    = 0;

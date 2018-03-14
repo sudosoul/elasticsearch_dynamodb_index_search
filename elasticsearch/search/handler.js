@@ -39,6 +39,7 @@ exports.handler = function(event, context, callback) {
           result.push(hits._source);
         });
       }
+      // Return array of results to client:
       return callback(null, prepareResponse(200, result));
   }).catch(e => {
     console.log('Error - ', e);
