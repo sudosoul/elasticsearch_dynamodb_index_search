@@ -85,7 +85,7 @@ class Search {
             query: searchTerm,
             type: 'best_fields',
             analyzer: 'nGram_analyzer',
-            fields: ['title^2','people.name','categories.name','tags.name']
+            fields: ['title^3', 'primaryCategory^2', 'categories.name', 'people.name', 'tags.name']
           } 
         }
       }
