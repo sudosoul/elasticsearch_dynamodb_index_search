@@ -81,28 +81,12 @@ class Search {
       index: self.index,
       body: {
         query: {
-          bool: {
-            must: {
-              multi_match: {
-                query: searchTerm,
-                type: 'best_fields',
-                fields: ['title^10', 'categories^8', 'people^6', 'tags^2'],
-                analyzer: 'nGram_analyzer'
-              }
-            },
-            filter:[
-              {
-                term: {
-                  isTrailer: showTrailers
-                }
-              }, 
-              {
-                term: {
-                  status: 'open'
-                }   
-              }
-            ]
-          }
+          multi_match: {
+            query: searchTerm,
+            type: 'best_fields',
+            analyzer: 'nGram_analyzer',
+            fields: ['title^2','people.name','categories.name','tags.name']
+          } 
         }
       }
     });
