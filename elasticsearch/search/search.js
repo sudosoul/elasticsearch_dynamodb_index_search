@@ -79,6 +79,8 @@ class Search {
     const self = this;
     return this.es.search({
       index: self.index,
+      size: 18,
+      type: 'videos',
       body: {
         query: {
           multi_match: {
