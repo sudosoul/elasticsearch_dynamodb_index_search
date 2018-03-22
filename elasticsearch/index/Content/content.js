@@ -47,7 +47,8 @@ class Content {
       case 'video':
         return this.videos.index(action, record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S);
       default:
-        return Promise.reject(new Error('Unsupported content type, only videos supported.'));
+        console.log('Unsupported content type `%s`, skipping it.', type);
+        return Promise.resolve();
     // create new cases for additional content type (images, etc)
     // case 'image':
     //   return this.images.index(...);
