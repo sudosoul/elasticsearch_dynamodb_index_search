@@ -104,7 +104,7 @@
         "parentalRating": {
           "type": "keyword"
         },      
-        "gist": {
+        "data": {
           "type": "object",
           "enabled": false
         }

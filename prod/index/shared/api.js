@@ -22,16 +22,20 @@ class ViewLift {
   constructor(stage, identity) {
     // Set the development stage:
     if (!stage) {
+      console.log('Stage not set in api');
       throw 'Stage not set!';
-    } else if (stage !== 'develop' && stage !== 'prod') {
+    } else if (stage !== 'develop' && stage !== 'release' && stage !== 'prod') {
+      console.log('Invalid value for stage in api');
       throw 'Invalid value for stage. Acceptable values are develop or prod.';
     } else {
       this.stage = stage;
     }
     // Set the identity:
     if (!identity) {
+      console.log('Identity not set in api');
       throw 'Identity not set!';
     } else if (identity !== 'anonymous' && identity !== 'anon' && identity !== 'server') {
+      console.log('invalid identity set in api');
       throw 'Invalid value for identity. Acceptable values are anonymous, anon, or server.';
     } else {
       this.identity = identity;

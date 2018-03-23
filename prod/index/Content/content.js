@@ -41,7 +41,7 @@ class Content {
   index(record) {
     //** Route Content Indexing to Class By Content Type **//
     const type   = record.dynamodb.NewImage ? record.dynamodb.NewImage.objectKey.S : record.dynamodb.OldImage.objectKey.S; // NewImage only exists on Insert/Modify events, OldImage must be used on Remove
-    const action = record.eventName === 'INSERT' || record.eventName === 'MODIFY' ? 'INSERT' : 'REMOVE'; // Determine action to perform on index (insert or remove)
+    const action = (record.eventName === 'INSERT' || record.eventName === 'MODIFY') ? 'INSERT' : 'REMOVE'; // Determine action to perform on index (insert or remove)
     switch (type) {
       // Index Video Content
       case 'video':

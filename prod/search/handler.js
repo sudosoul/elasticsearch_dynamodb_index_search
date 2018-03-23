@@ -36,7 +36,7 @@ exports.handler = function(event, context, callback) {
       const result = [];
       if (results.hits.hits.length > 0) {
         results.hits.hits.forEach(hits => {
-          result.push(hits._source);
+          result.push(hits._source.data);
         });
       }
       // Return array of results to client:
@@ -57,6 +57,7 @@ exports.handler = function(event, context, callback) {
     return {
       statusCode      : statusCode,
       body            : JSON.stringify(body), 
+      headers: {"Access-Control-Allow-Origin": "*"},
       isBase64Encoded : false
     };
   }

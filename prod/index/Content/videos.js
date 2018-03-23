@@ -20,8 +20,6 @@
 const API   = require('../shared/api'); // Import ViewLift API Class
 const Index = require('../shared/index'); // Import the parent Index class
 
-
-
 /**
  * Performs indexing operations for video documents.
  * This class is called to either insert or remove a document from a given index.
@@ -70,7 +68,7 @@ class Videos extends Index {
         });      
       //** Remove Document **//
       } else if (action === 'REMOVE') {
-        self.remove(site, 'videos', id, doc)      // Remove the document
+        self.remove(site, 'videos', id)      // Remove the document
           .then(success => {
             fulfill(true);                        // Document successfully inserted!
         }).catch(e => {
@@ -110,7 +108,7 @@ class Videos extends Index {
             free:            video.gist.free,
             year:            video.gist.year,
             parentalRating:  video.parentalRating,
-            gist:            video.gist
+            data:            video
           };
           // Fulfill with video document:
           fulfill(doc);

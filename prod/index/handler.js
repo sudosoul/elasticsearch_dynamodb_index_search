@@ -2,7 +2,7 @@
  * Lambda Function to Index Data in ElasticSearch
  *
  * This service is attached as a trigger to the following DynamoDB tables: 
- *  PROD.CONTENT.CONTENT_METADATA.
+ *  RELEASE.CONTENT.CONTENT_METADATA.
  *
  * Whenever a change is made to the table (INSERT, REMOVE, MODIFY), this service is triggered and
  * receives the updated data. This service will parse the required data, and update the ElasticSearch
@@ -53,14 +53,9 @@ exports.handler = function(event, context, callback) {
     const table = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,''); // Get Table Name from ARN
     switch (table) {
       // Index Content Data:
-      case 'PROD.CONTENT.CONTENT_METADATA':
+      case 'RELEASE.CONTENT.CONTENT_METADATA':
         processing.push(content.index(record));
         break;
-      
-      // add new cases for each DynamoDB table we want to index  
-      // case 'some.users.table':
-      //   processing.push(users.index(record));
-      //   break;
     }
   });
 
