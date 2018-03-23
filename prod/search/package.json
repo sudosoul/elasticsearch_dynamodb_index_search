@@ -1,0 +1,27 @@
+{
+  "name": "elasticsearch_search",
+  "version": "2.0.0",
+  "description": "ElasticSearch Search Service",
+  "main": "search.js",
+  "dependencies": {
+    "elasticsearch": "^14.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snagfilms/searchv2.git"
+  },
+  "keywords": [
+    "elasticsearch",
+    "search"
+  ],
+  "author": "Rob Mullins <rob@viewlift.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/snagfilms/searchv2/issues"
+  },
+  "homepage": "https://github.com/snagfilms/searchv2#readme"
+}
