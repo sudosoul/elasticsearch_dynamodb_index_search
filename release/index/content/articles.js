@@ -54,24 +54,24 @@ class Articles extends Index {
     return new Promise((fulfill, reject) => {     
       //** Insert/Modify Document **//
       if (action === 'INSERT') {
-        self._prepareDocument(site, id)           // Create the article document to insert..
+        self._prepareDocument(site, id)             // Create the article document to insert..
           .then(doc => {
-            self.insert(site, 'videos', id, doc)  // Insert the document..
+            self.insert(site, 'articles', id, doc)  // Insert the document..
               .then(success => {
-                fulfill(true);                    // Document successfully inserted!
+                fulfill(true);                      // Document successfully inserted!
             }).catch(e => {
-              reject(e);                          // Error inserting document!
+              reject(e);                            // Error inserting document!
             });
         }).catch(e => {
-          reject(e);                              // Error preparing document!
+          reject(e);                                // Error preparing document!
         });      
       //** Remove Document **//
       } else if (action === 'REMOVE') {
-        self.remove(site, 'videos', id)           // Remove the document
+        self.remove(site, 'articles', id)           // Remove the document
           .then(success => {
-            fulfill(true);                        // Document successfully removed!
+            fulfill(true);                          // Document successfully removed!
         }).catch(e => {
-          reject(e);                              // Error removing document!
+          reject(e);                                // Error removing document!
         });
       }
     });
@@ -95,6 +95,7 @@ class Articles extends Index {
           // Define & Build Document Body:
           const doc = {
             type                   : 'article',
+            articleTitle           : article.gist.title,
             articleDescription     : article.gist.description,
             articleAuthor          : article.contentDetails.author.name,
             articlePrimaryCategory : Object.keys(article.gist.primaryCategory).length !== 0 ? article.gist.primaryCategory.title : null,
@@ -142,5 +143,5 @@ class Articles extends Index {
 
 }
 
-//** Expose this Videos Class **//
+//** Expose this Articles Class **//
 module.exports = Articles;

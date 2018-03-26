@@ -173,10 +173,81 @@ class ViewLift {
           reject(res);                          // Return response info.
         } else {                                // Else request OK, parse data...
           try {                                 // Attempt to parse data from JSON...
-            const data = JSON.parse(body).records[0];
+            const data = JSON.parse(body);
             fulfill(data);                      // Return the data!
           } catch (e) {
             console.log("Error parsing data from JSON for article %s - ", id, e);
+            reject(body);                        // Return response info. 
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Gets event data from VL API for specified article ID.
+   *
+   * @param    {string} site - The site the event belongs to
+   * @param    {string} id   - The event ID to retrieve data for.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        The event data.
+   * @rejects  {RequestError}  Error making request to VL API.
+   */
+  getEvent(site, id) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      self.generateToken(site)              // Generate API token 
+        .then((token) => {
+          self._getVideo(site, id, token)   // Make the Get Event request.
+            .then(meta => {
+              fulfill(meta);                // Return the event data.
+          }).catch(e => {
+            console.log("Error getting article data from API - ", e);
+            reject(e);                      // Error getting data, return error.
+          });
+      }).catch(e => {
+        console.log("Error getting API token for site %s - ", site, e);
+        reject(e);                          // Error getting VL API token, return error.
+      });
+    });
+  }
+
+  /**
+   * Gets event data from VL API for specified article ID.
+   * Helper for getEvent().
+   *
+   * @param    {string} site  - The site the event belongs to
+   * @param    {string} id    - The event ID to retrieve metadata for.
+   * @param    {string} token - The ViewLift API token.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        Object containing the event data.
+   * @rejects  {RequestError}  Error making request to API.
+   * @rejects  {ParseError}    Error parsing the JSON API response.
+   */
+  _getEvent(site, id, token) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      Request({
+        url: 'https://' + self.stage + '-api.viewlift.com/content/event',
+        method: 'GET',
+        qs: { 
+          id:   id,
+          site: site, 
+        },
+        headers: { 'Authorization': token }
+      }, (err, res, body) => {
+        if (err) {                              // If internal error making HTTP request...
+          console.log("Internal Error getting data for event: %s - ", id, err);
+          reject(err);                          // Return error.
+        } else if (res.statusCode >= 400) {     // If API returns non-success status code...
+          console.log("API returned a %d error status while getting data for event: %s - ", res.statusCode, id, body);
+          reject(res);                          // Return response info.
+        } else {                                // Else request OK, parse data...
+          try {                                 // Attempt to parse data from JSON...
+            const data = JSON.parse(body);
+            fulfill(data);                      // Return the data!
+          } catch (e) {
+            console.log("Error parsing data from JSON for event %s - ", id, e);
             reject(body);                        // Return response info. 
           }
         }

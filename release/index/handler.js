@@ -64,30 +64,36 @@ exports.handler = function(event, context, callback) {
   //** Iterate through DynamoDB Events **//
   const processing = []; 
   event.Records.forEach(record => {
+    //** Parse Table Name, Event Action, Site, ID, DynamoDB Image **//
     const table  = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,''); // Get Table Name from ARN
     const action = (record.eventName === 'INSERT' || record.eventName === 'MODIFY') ? 'INSERT' : 'REMOVE';        // Determine action to perform on index (insert or remove)
+    const site   = record.dynamodb.Keys.site.S;
+    const id     = record.dynamodb.Keys.id.S;
+    const image  = record.dynamodb.NewImage ? record.dynamodb.NewImage : record.dynamodb.OldImage; // Set image to NewImage if NewImage defined (INSERT/MODIFY events) else set it to OldImage (REMOVE event)
+    let   type   = null;
     //** Index According to Table **//
     switch (table) {  
       // Index Video Data:
       case 'RELEASE.CONTENT.CONTENT_METADATA':
-        const type = record.dynamodb.NewImage ? record.dynamodb.NewImage.objectKey.S : record.dynamodb.OldImage.objectKey.S; // NewImage only exists on Insert/Modify events, OldImage must be used on Remove
-        if (type === 'video') processing.push(this.videos.index(action, record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S));
+        type = image.objectKey.S; 
+        if (type === 'video') processing.push(this.videos.index(action, site, id));
         else console.log('Skipping unsupported metadata type - ', type);
         break;     
       // Index Series Data:
-      case 'RELEASE.CONTENT.SERIES':
-        const image = record.dynamodb.NewImage ? record.dynamodb.NewImage : record.dynamodb.OldImage;
-        if (!image.objectType) processing.push(this.series.index(action, record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S, image)); // Only index series that have no objectType defined
+      case 'RELEASE.CONTENT.SERIES':       
+        if (!image.objectType) processing.push(this.series.index(action, site, id, image)); // Only index series that have no objectType defined
         else console.log('Skipping unsupported series type');
         break;     
       // Index Article Data:
       case 'RELEASE.CONTENT.ARTICLE':
-        processing.push(this.articles.index);
+        processing.push(this.articles.index(action, site, id));
         break;
       // Index Event Data:
-      // case 'RELEASE.CONTENT.EVENT':
-      //  processing.push(this.events.index);
-      //  break;
+      case 'RELEASE.CONTENT.EVENT':
+       type = image.contentType.S;
+       if (type === 'EVENT') processing.push(this.events.index(action, site, id));
+       else console.log('Skipping unsupported event type - ', type);
+       break;
     }
   });
 

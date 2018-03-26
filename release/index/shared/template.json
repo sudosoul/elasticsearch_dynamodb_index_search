@@ -224,6 +224,64 @@
           "enabled": false
         }
       }
+    },
+    "events": {
+      "properties": {
+        "type": {
+          "type": "keyword"
+        },
+        "eventTitle": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "eventDescription": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "eventPrimaryCategory": {
+          "type": "text",
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "eventCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
+        "eventTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
+        "eventVenue": {
+          "type": "keyword"
+        },
+        "eventTime": {
+          "type": "keyword"
+        },
+        "eventDate": {
+          "type": "keyword"
+        },
+        "data": {
+          "type": "object",
+          "enabled": false
+        }
+      }
     }
   }
 }
