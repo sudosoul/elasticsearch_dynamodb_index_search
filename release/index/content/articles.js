@@ -1,5 +1,5 @@
 /**
- * Indexes Videos
+ * Indexes Articles
  *
  * REQUIRED ENVIRONMENT VARIABLES
  *  AWS_REGION  - The AWS Region, available by default by Lambda.
@@ -16,20 +16,20 @@
  */
 
 // Load Dependencies:
-const API   = require('../shared/api'); // Import ViewLift API Class
+const API   = require('../shared/api');   // Import ViewLift API Class
 const Index = require('../shared/index'); // Import the parent Index class
 
 /**
- * Performs indexing operations for video documents.
+ * Performs indexing operations for article documents.
  * This class is called to either insert or remove a document from a given index.
  *
- * Insert: Retrieves video data from API, formats the data to the document model,
+ * Insert: Retrieves article data from API, formats the data to the document model,
  * and inserts it into the relevant index. 
  *
  * Remove: Removes a document from an index specified by document ID.
  *
  */
-class Videos extends Index {
+class Articles extends Index {
 
   /**
    * Constructor
@@ -40,11 +40,11 @@ class Videos extends Index {
   }
 
   /**
-   * Removes or Inserts a video document into an index specified by site.
+   * Removes or Inserts an article document into an index specified by site.
    *
    * @param    {string} action - `insert` | `remove` - insert or remove the doc.
-   * @param    {string} site   - The site the video belongs to, also the name of the index.
-   * @param    {string} id     - The ID of the video to insert, or the ID of the document to remove.
+   * @param    {string} site   - The site the article belongs to, also the name of the index.
+   * @param    {string} id     - The ID of the article to insert, or the ID of the document to remove.
    * @return   {Promise.<boolean,Error>}
    * @fulfills {boolean} - True on success
    * @rejects  {Error}   - Error on fail
@@ -54,7 +54,7 @@ class Videos extends Index {
     return new Promise((fulfill, reject) => {     
       //** Insert/Modify Document **//
       if (action === 'INSERT') {
-        self._prepareDocument(site, id)           // Create the video document to insert..
+        self._prepareDocument(site, id)           // Create the article document to insert..
           .then(doc => {
             self.insert(site, 'videos', id, doc)  // Insert the document..
               .then(success => {
@@ -78,10 +78,10 @@ class Videos extends Index {
   }
 
   /**
-   * Prepare the video document for indexing, with data retrieve from VL API.
+   * Prepare the article document for indexing, with data retrieve from VL API.
    * 
-   * @param    {string} site - The site associated with the video.
-   * @param    {string} id   - The video ID.
+   * @param    {string} site - The site associated with the article.
+   * @param    {string} id   - The article ID.
    * @return   {Promise.<object,Error>} 
    * @fulfills {object}          The document body object.
    * @rejects  {Error}           A VL API Error.
@@ -89,52 +89,25 @@ class Videos extends Index {
   _prepareDocument(site, id) {
     const self = this;
     return new Promise((fulfill, reject) => {
-      // Get Complete Video Data from API:
-      self.api.getVideo(site, id)
-        .then(video => {
+      // Get Article Data from API:
+      self.api.getArticle(site, id)
+        .then(article => {
           // Define & Build Document Body:
-          delete video.streamingInfo; // Remove streaming info from video data.
           const doc = {
-            type                 : 'video',
-            videoTitle           : video.gist.title,
-            videoDescription     : video.gist.description,
-            videoPrimaryCategory : video.gist.primaryCategory ? video.gist.primaryCategory.title : null,
-            videoCategories      : video.categories ? (video.categories.length > 0 ? self._defineCategories(video.categories) : null) : null,
-            videoTags            : video.tags ? (video.tags.length > 0 ? self._defineTags(video.tags) : null) : null,
-            videoPeople          : video.creditBlocks ? (video.creditBlocks.length > 0 ? self._definePeople(video.creditBlocks) : null) : null,
-            isTrailer            : video.gist.isTrailer || false,
-            free                 : video.gist.free,
-            year                 : video.gist.year,
-            parentalRating       : video.parentalRating,
-            status               : video.contentDetails.status,
-            data                 : video
+            type                   : 'article',
+            articleDescription     : article.gist.description,
+            articleAuthor          : article.contentDetails.author.name,
+            articlePrimaryCategory : Object.keys(article.gist.primaryCategory).length !== 0 ? article.gist.primaryCategory.title : null,
+            articleCategories      : article.categories ? (article.categories.length > 0 ? self._defineCategories(article.categories) : null) : null,
+            articleTags            : article.tags ? (article.tags.length > 0 ? self._defineTags(article.tags) : null) : null,
+            data                   : article
           };
-          // Fulfill with video document:
+          // Fulfill with article document:
           fulfill(doc);
       }).catch(e => {
         reject(e);
       });
     });
-  }
-
-  /**
-   * Parses the `creditBlocks` field returned from API and
-   * prepares an array of objects containing the name of each
-   * actor and directors found in the `creditBlocks`.
-   *
-   * @param  {array} creditBlocks - The creditBlocks array returned from API.
-   * @return {array} Array of objects containing name of each actor/director.
-   */
-  _definePeople(creditBlocks) {
-    const people = [];
-    creditBlocks.forEach(block => {
-      if (block.credits) {
-        block.credits.forEach(credit => {
-          people.push({name: credit.title});
-        });
-      }
-    });
-    return people;
   }
 
   /**
@@ -170,4 +143,4 @@ class Videos extends Index {
 }
 
 //** Expose this Videos Class **//
-module.exports = Videos;
+module.exports = Articles;

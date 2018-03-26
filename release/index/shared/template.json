@@ -170,6 +170,60 @@
           "enabled": false
         }
       }
+    },
+    "articles": {
+      "properties": {
+        "type": {
+          "type": "keyword"
+        },
+        "articleTitle": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "articleDescription": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "articleAuthor": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "articlePrimaryCategory": {
+          "type": "text",
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "articleCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
+        "articleTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
+        "data": {
+          "type": "object",
+          "enabled": false
+        }
+      }
     }
   }
 }
