@@ -39,20 +39,20 @@
   "mappings": {
     "videos": {
       "properties": {
-        "title": {
+        "type": {
+          "type": "keyword"
+        },
+        "videoTitle": {
           "type": "text", 
           "analyzer": "nGram_analyzer",
           "search_analyzer": "standard_stopwords-en"
         },
-        "type": {
-          "type": "keyword"
-        },
-        "description": {
+        "videoDescription": {
           "type": "text",
           "analyzer": "nGram_analyzer",
           "search_analyzer": "standard_stopwords-en"
         },
-        "primaryCategory": {
+        "videoPrimaryCategory": {
           "type": "text",
           "analyzer": "nGram_analyzer",
           "search_analyzer": "standard_stopwords-en",
@@ -62,7 +62,7 @@
             }
           }
         },
-        "categories": {
+        "videoCategories": {
           "properties": {
             "name": {
               "type": "text",
@@ -71,7 +71,7 @@
             }
           }
         },
-        "people": {
+        "videoPeople": {
           "properties": {
             "name": {
               "type": "text",
@@ -80,7 +80,7 @@
             }
           }
         },
-        "tags": {
+        "videoTags": {
           "properties": {
             "name": {
               "type": "text",
@@ -104,6 +104,67 @@
         "parentalRating": {
           "type": "keyword"
         },      
+        "data": {
+          "type": "object",
+          "enabled": false
+        }
+      }
+    },
+    "series": {
+      "properties": {
+        "type": {
+          "type": "keyword"
+        },
+        "seriesTitle": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "seriesDescription": {
+          "type": "text",
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "seriesPrimaryCategory": {
+          "type": "text",
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "seriesCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
+        "seriesPeople": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
+        "seriesTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },  
+        "status": {
+          "type": "keyword"
+        },
         "data": {
           "type": "object",
           "enabled": false

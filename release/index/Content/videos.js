@@ -6,7 +6,6 @@
  *  STAGE       - The development stage (dev, staging, prod).
  *  ES_ENDPOINT - The URL endpoint to the ElasticSearch cluster.
  *  ES_VERSION  - The version of ElasticSearch used on our cluster.
- *  ES_SUGGEST_SKIP - Comma separated string including the words to skip (a,the,of,in).
  *  
  *
  * @requires api.js
@@ -68,9 +67,9 @@ class Videos extends Index {
         });      
       //** Remove Document **//
       } else if (action === 'REMOVE') {
-        self.remove(site, 'videos', id)      // Remove the document
+        self.remove(site, 'videos', id)           // Remove the document
           .then(success => {
-            fulfill(true);                        // Document successfully inserted!
+            fulfill(true);                        // Document successfully removed!
         }).catch(e => {
           reject(e);                              // Error removing document!
         });
@@ -96,14 +95,14 @@ class Videos extends Index {
           // Define & Build Document Body:
           delete video.streamingInfo; // Remove streaming info from video data.
           const doc = {
-            title:           video.gist.title,
-            type:            'video',
-            description:     video.gist.description,
-            primaryCategory: video.gist.primaryCategory ? video.gist.primaryCategory.title : null,
-            categories:      self._defineCategories(video.categories),
-            tags:            self._defineTags(video.tags),
-            status:          video.contentDetails.status,
-            people:          video.creditBlocks ? (video.creditBlocks.length > 0 ? self._definePeople(video.creditBlocks) : null) : null,
+            type:                 'video',
+            videoTitle:           video.gist.title,
+            videoDescription:     video.gist.description,
+            videoPrimaryCategory: video.gist.primaryCategory ? video.gist.primaryCategory.title : null,
+            videoCategories:      self._defineCategories(video.categories),
+            videoTags:            self._defineTags(video.tags),
+            videoStatus:          video.contentDetails.status,
+            videoPeople:          video.creditBlocks ? (video.creditBlocks.length > 0 ? self._definePeople(video.creditBlocks) : null) : null,
             isTrailer:       video.gist.isTrailer || false,
             free:            video.gist.free,
             year:            video.gist.year,

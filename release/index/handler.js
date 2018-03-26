@@ -23,7 +23,8 @@
  */
 
 // Import Dependencies:
-const Content = require('./Content/content');
+const Videos = require('./content/videos'); // Import video content type class
+const Series = require('./content/series'); // Import video content type class
 
 /**
  * Lambda Entry Point
@@ -44,17 +45,27 @@ exports.handler = function(event, context, callback) {
     return callback('Not all required environment variables were set.');
   }
   //** Instantiate required classes **//
-  const content = new Content(); 
+  const videos = new Videos();
+  const series = new Series(); 
 
   //** Iterate through DynamoDB Events **//
   const processing = []; 
   event.Records.forEach(record => {
     //** Index According to Table **//
-    const table = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,''); // Get Table Name from ARN
+    const table  = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,''); // Get Table Name from ARN
+    const action = (record.eventName === 'INSERT' || record.eventName === 'MODIFY') ? 'INSERT' : 'REMOVE';       // Determine action to perform on index (insert or remove)
     switch (table) {
-      // Index Content Data:
+      // Index Video Data:
       case 'RELEASE.CONTENT.CONTENT_METADATA':
-        processing.push(content.index(record));
+        const type = record.dynamodb.NewImage ? record.dynamodb.NewImage.objectKey.S : record.dynamodb.OldImage.objectKey.S; // NewImage only exists on Insert/Modify events, OldImage must be used on Remove
+        if (type === 'video') processing.push(this.videos.index(action, record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S));
+        else console.log('Skipping unsupported metadata type - ', type);
+        break;
+      // Index Series Data:
+      case 'RELEASE.CONTENT.SERIES':
+        const image = record.dynamodb.NewImage ? record.dynamodb.NewImage : record.dynamodb.OldImage;
+        if (!image.objectType) processing.push(this.series.index(action, record.dynamodb.Keys.site.S, record.dynamodb.Keys.id.S, image)); // Only index series that have no objectType defined
+        else console.log('Skipping unsupported series type');
         break;
     }
   });
