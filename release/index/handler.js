@@ -35,7 +35,7 @@
 const Videos   = require('./content/videos');   // Import video    content type class
 const Series   = require('./content/series');   // Import series   content type class
 const Articles = require('./content/articles'); // Import articles content type class
-const Events   = require('./content/articles'); // Import articles content type class
+const Events   = require('./content/events'); // Import articles content type class
 
 // Instantiate Required Content Classes:
 const videos   = new Videos();
