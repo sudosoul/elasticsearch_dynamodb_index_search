@@ -82,13 +82,14 @@ class Search {
       size: 18,
       type: 'videos',
       body: {
+        min_score: 15,
         query: {
           multi_match: {
             query: searchTerm,
             type: 'best_fields',
             analyzer: 'nGram_analyzer',
-            fields: ['title^3', 'primaryCategory^2', 'categories.name', 'people.name', 'tags.name']
-          } 
+            fields: ['title', 'primaryCategory', 'categories.name', 'people.name', 'tags.name']
+          }
         }
       }
     });

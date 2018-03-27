@@ -37,7 +37,7 @@
     }
   },
   "mappings": {
-    "videos": {
+    "content": {
       "properties": {
         "type": {
           "type": "keyword"
@@ -88,33 +88,7 @@
               "search_analyzer": "standard_stopwords-en"
             }
           }
-        },
-        "status": {
-          "type": "keyword"
-        },
-        "isTrailer": {
-          "type": "keyword"
-        },
-        "free": {
-          "type": "keyword"
-        },
-        "year": {
-          "type": "keyword"
-        },
-        "parentalRating": {
-          "type": "keyword"
-        },      
-        "data": {
-          "type": "object",
-          "enabled": false
-        }
-      }
-    },
-    "series": {
-      "properties": {
-        "type": {
-          "type": "keyword"
-        },
+        },     
         "seriesTitle": {
           "type": "text", 
           "analyzer": "nGram_analyzer",
@@ -162,20 +136,6 @@
             }
           }
         },  
-        "status": {
-          "type": "keyword"
-        },
-        "data": {
-          "type": "object",
-          "enabled": false
-        }
-      }
-    },
-    "articles": {
-      "properties": {
-        "type": {
-          "type": "keyword"
-        },
         "articleTitle": {
           "type": "text", 
           "analyzer": "nGram_analyzer",
@@ -218,17 +178,6 @@
               "search_analyzer": "standard_stopwords-en"
             }
           }
-        },
-        "data": {
-          "type": "object",
-          "enabled": false
-        }
-      }
-    },
-    "events": {
-      "properties": {
-        "type": {
-          "type": "keyword"
         },
         "eventTitle": {
           "type": "text", 
@@ -277,6 +226,21 @@
         "eventDate": {
           "type": "keyword"
         },
+        "status": {
+          "type": "keyword"
+        },
+        "isTrailer": {
+          "type": "keyword"
+        },
+        "free": {
+          "type": "keyword"
+        },
+        "year": {
+          "type": "keyword"
+        },
+        "parentalRating": {
+          "type": "keyword"
+        }, 
         "data": {
           "type": "object",
           "enabled": false

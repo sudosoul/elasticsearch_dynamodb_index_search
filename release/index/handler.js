@@ -76,22 +76,22 @@ exports.handler = function(event, context, callback) {
       // Index Video Data:
       case 'RELEASE.CONTENT.CONTENT_METADATA':
         type = image.objectKey.S; 
-        if (type === 'video') processing.push(this.videos.index(action, site, id));
+        if (type === 'video') processing.push(videos.index(action, site, id));
         else console.log('Skipping unsupported metadata type - ', type);
         break;     
       // Index Series Data:
       case 'RELEASE.CONTENT.SERIES':       
-        if (!image.objectType) processing.push(this.series.index(action, site, id, image)); // Only index series that have no objectType defined
+        if (!image.objectType) processing.push(series.index(action, site, id, image)); // Only index series that have no objectType defined
         else console.log('Skipping unsupported series type');
         break;     
       // Index Article Data:
       case 'RELEASE.CONTENT.ARTICLE':
-        processing.push(this.articles.index(action, site, id));
+        processing.push(articles.index(action, site, id));
         break;
       // Index Event Data:
       case 'RELEASE.CONTENT.EVENT':
        type = image.contentType.S;
-       if (type === 'EVENT') processing.push(this.events.index(action, site, id));
+       if (type === 'EVENT') processing.push(events.index(action, site, id));
        else console.log('Skipping unsupported event type - ', type);
        break;
     }

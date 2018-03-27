@@ -56,7 +56,7 @@ class Articles extends Index {
       if (action === 'INSERT') {
         self._prepareDocument(site, id)             // Create the article document to insert..
           .then(doc => {
-            self.insert(site, 'articles', id, doc)  // Insert the document..
+            self.insert(site, id, doc)  // Insert the document..
               .then(success => {
                 fulfill(true);                      // Document successfully inserted!
             }).catch(e => {
@@ -67,7 +67,7 @@ class Articles extends Index {
         });      
       //** Remove Document **//
       } else if (action === 'REMOVE') {
-        self.remove(site, 'articles', id)           // Remove the document
+        self.remove(site, id)           // Remove the document
           .then(success => {
             fulfill(true);                          // Document successfully removed!
         }).catch(e => {

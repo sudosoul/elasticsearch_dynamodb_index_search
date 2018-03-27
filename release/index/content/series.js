@@ -51,8 +51,8 @@ class Series extends Index {
     return new Promise((fulfill, reject) => {     
       //** Insert/Modify Document **//
       if (action === 'INSERT') {
-        const doc = _prepareDocument(image);          
-        self.insert(site, 'series', id, doc)  // Insert the document..
+        const doc = self._prepareDocument(image);          
+        self.insert(site, id, doc)  // Insert the document..
           .then(success => {
             fulfill(true);                    // Document successfully inserted!
         }).catch(e => {
@@ -60,7 +60,7 @@ class Series extends Index {
         });      
       //** Remove Document **//
       } else if (action === 'REMOVE') {
-        self.remove(site, 'series', id)       // Remove the document
+        self.remove(site, id)       // Remove the document
           .then(success => {
             fulfill(true);                    // Document successfully removed!
         }).catch(e => {

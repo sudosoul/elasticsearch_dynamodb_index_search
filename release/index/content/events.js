@@ -56,7 +56,7 @@ class Events extends Index {
       if (action === 'INSERT') {
         self._prepareDocument(site, id)           // Create the event document to insert..
           .then(doc => {
-            self.insert(site, 'events', id, doc)  // Insert the document..
+            self.insert(site, id, doc)  // Insert the document..
               .then(success => {
                 fulfill(true);                    // Document successfully inserted!
             }).catch(e => {
@@ -67,7 +67,7 @@ class Events extends Index {
         });      
       //** Remove Document **//
       } else if (action === 'REMOVE') {
-        self.remove(site, 'events', id)           // Remove the document
+        self.remove(site, id)           // Remove the document
           .then(success => {
             fulfill(true);                        // Document successfully removed!
         }).catch(e => {
