@@ -98,7 +98,7 @@ class Articles extends Index {
             articleTitle           : article.gist.title,
             articleDescription     : article.gist.description,
             articleAuthor          : article.contentDetails.author.name,
-            articlePrimaryCategory : Object.keys(article.gist.primaryCategory).length !== 0 ? article.gist.primaryCategory.title : null,
+            articlePrimaryCategory : article.gist.primaryCategory ? (Object.keys(article.gist.primaryCategory).length !== 0 ? article.gist.primaryCategory.title : null) : null,
             articleCategories      : article.categories ? (article.categories.length > 0 ? self._defineCategories(article.categories) : null) : null,
             articleTags            : article.tags ? (article.tags.length > 0 ? self._defineTags(article.tags) : null) : null,
             data                   : article

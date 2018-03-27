@@ -87,11 +87,11 @@ class Series extends Index {
       type                  : 'series',
       seriesTitle           : item.gist.title,
       seriesDescription     : item.gist.description,
-      seriesPrimaryCategory : item.gist.primaryCategory.title,
-      seriesCategories      : this._defineCategories(item.categories),
-      seriesPeople          : this._definePeople(item.creditBlocks),
-      seriesTags            : this._defineTags(item.tags),
-      status                : item.showDetails.status,
+      seriesPrimaryCategory : item.gist.primaryCategory ? (Object.keys(item.gist.primaryCategory).length !== 0 ? item.gist.primaryCategory.title : null) : null,
+      seriesCategories      : item.categories ? (item.categories.length > 0 ? this._defineCategories(item.categories) : null) : null,
+      seriesPeople          : item.creditBlocks ? (item.creditBlocks.length > 0 ? this._definePeople(item.creditBlocks) : null) : null,
+      seriesTags            : item.tags ? (item.tags.length > 0 ? this._defineTags(item.tags) : null) : null,
+      status                : item.showDetails ? item.showDetails.status : null,
       data                  : item
     };
     return doc;

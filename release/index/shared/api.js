@@ -127,7 +127,7 @@ class ViewLift {
     return new Promise((fulfill, reject) => {
       self.generateToken(site)              // Generate API token 
         .then((token) => {
-          self._getVideo(site, id, token)   // Make the Get Article request.
+          self._getArticle(site, id, token)   // Make the Get Article request.
             .then(meta => {
               fulfill(meta);                // Return the article data.
           }).catch(e => {
@@ -198,7 +198,7 @@ class ViewLift {
     return new Promise((fulfill, reject) => {
       self.generateToken(site)              // Generate API token 
         .then((token) => {
-          self._getVideo(site, id, token)   // Make the Get Event request.
+          self._getEvent(site, id, token)   // Make the Get Event request.
             .then(meta => {
               fulfill(meta);                // Return the event data.
           }).catch(e => {

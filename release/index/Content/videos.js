@@ -98,7 +98,7 @@ class Videos extends Index {
             type                 : 'video',
             videoTitle           : video.gist.title,
             videoDescription     : video.gist.description,
-            videoPrimaryCategory : video.gist.primaryCategory ? video.gist.primaryCategory.title : null,
+            videoPrimaryCategory : video.gist.primaryCategory ? (Object.keys(video.gist.primaryCategory).length !== 0 ? video.gist.primaryCategory.title : null) : null,
             videoCategories      : video.categories ? (video.categories.length > 0 ? self._defineCategories(video.categories) : null) : null,
             videoTags            : video.tags ? (video.tags.length > 0 ? self._defineTags(video.tags) : null) : null,
             videoPeople          : video.creditBlocks ? (video.creditBlocks.length > 0 ? self._definePeople(video.creditBlocks) : null) : null,

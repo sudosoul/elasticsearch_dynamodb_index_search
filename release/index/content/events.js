@@ -97,7 +97,7 @@ class Events extends Index {
             type                 : 'event',
             eventTitle           : event.gist.title,
             eventDescription     : event.gist.description,
-            eventPrimaryCategory : Object.keys(event.gist.primaryCategory).length !== 0 ? event.gist.primaryCategory.title : null,
+            eventPrimaryCategory : event.gist.primaryCategory ? (Object.keys(event.gist.primaryCategory).length !== 0 ? event.gist.primaryCategory.title : null) : null,
             eventCategories      : event.categories ? (event.categories.length > 0 ? self._defineCategories(event.categories) : null) : null,
             eventTags            : event.tags ? (event.tags.length > 0 ? self._defineTags(event.tags) : null) : null,
             eventVenue           : event.gist.eventSchedule[0].venue,
