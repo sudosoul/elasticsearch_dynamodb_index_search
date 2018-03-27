@@ -100,9 +100,9 @@ class Events extends Index {
             eventPrimaryCategory : event.gist.primaryCategory ? (Object.keys(event.gist.primaryCategory).length !== 0 ? event.gist.primaryCategory.title : null) : null,
             eventCategories      : event.categories ? (event.categories.length > 0 ? self._defineCategories(event.categories) : null) : null,
             eventTags            : event.tags ? (event.tags.length > 0 ? self._defineTags(event.tags) : null) : null,
-            eventVenue           : event.gist.eventSchedule[0].venue,
-            eventTime            : event.gist.eventSchedule[0].eventTime,
-            eventDate            : event.gist.eventSchedule[0].eventDate,
+            eventVenue           : event.gist.eventSchedule ? (event.gist.eventSchedule.length > 0 ? event.gist.eventSchedule[0].venue : null) : null,
+            eventTime            : event.gist.eventSchedule ? (event.gist.eventSchedule.length > 0 ? event.gist.eventSchedule[0].eventTime : null) : null,
+            eventDate            : event.gist.eventSchedule ? (event.gist.eventSchedule.length > 0 ? event.gist.eventSchedule[0].eventDate : null) : null,
             data                 : event
           };
           // Fulfill with event document:

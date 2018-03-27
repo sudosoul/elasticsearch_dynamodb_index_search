@@ -80,7 +80,7 @@ class Search {
     return this.es.search({
       index: self.index,
       size: 18,
-      type: 'videos',
+      type: 'content',
       body: {
         min_score: 15,
         query: {
@@ -88,7 +88,13 @@ class Search {
             query: searchTerm,
             type: 'best_fields',
             analyzer: 'nGram_analyzer',
-            fields: ['title', 'primaryCategory', 'categories.name', 'people.name', 'tags.name']
+            fields: [
+              'videoTitle', 'videoPrimaryCategory', 'videoCategories.name', 'videoPeople.name', 'videoTags.name',
+              'seriesTitle', 'seriesPrimaryCategory', 'seriesCategories.name', 'seriesPeople.name', 'seriesTags.name',
+              'articleTitle', 'articleAuthor', 'articlePrimaryCategory', 'articleCategories.name',  'articleTags.name',
+              'eventTitle', 'eventPrimaryCategory', 'eventCategories.name',  'eventTags.name',
+
+            ]
           }
         }
       }
