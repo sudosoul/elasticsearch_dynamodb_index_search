@@ -98,7 +98,7 @@ class Audio extends Index {
             type                 : 'audio',
             audioTitle           : audio.gist.title,
             audioDescription     : audio.gist.description,
-            audioAuthor          : audio.contentDetails.author.name,
+            audioAuthor          : audio.contentDetails.author ? (Object.keys(audio.contentDetails.author).length !== 0 ? audio.contentDetails.author.name : null) : null,
             audioPrimaryCategory : audio.gist.primaryCategory ? (Object.keys(audio.gist.primaryCategory).length !== 0 ? audio.gist.primaryCategory.title : null) : null,
             audioCategories      : audio.categories ? (audio.categories.length > 0 ? self._defineCategories(audio.categories) : null) : null,
             audioTags            : audio.tags ? (audio.tags.length > 0 ? self._defineTags(audio.tags) : null) : null,
