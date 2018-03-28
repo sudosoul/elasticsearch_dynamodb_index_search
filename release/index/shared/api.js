@@ -255,6 +255,77 @@ class ViewLift {
     });
   }
 
+  /**
+   * Gets audio data from VL API for specified audio ID.
+   *
+   * @param    {string} site - The site the audio belongs to
+   * @param    {string} id   - The audio ID to retrieve data for.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        The audio data.
+   * @rejects  {RequestError}  Error making request to VL API.
+   */
+  getAudio(site, id) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      self.generateToken(site)              // Generate API token 
+        .then((token) => {
+          self._getAudio(site, id, token)   // Make the Get Audio request.
+            .then(meta => {
+              fulfill(meta);                // Return the audio data.
+          }).catch(e => {
+            console.log("Error getting article data from API - ", e);
+            reject(e);                      // Error getting data, return error.
+          });
+      }).catch(e => {
+        console.log("Error getting API token for site %s - ", site, e);
+        reject(e);                          // Error getting VL API token, return error.
+      });
+    });
+  }
+
+  /**
+   * Gets audio data from VL API for specified audio ID.
+   * Helper for getEvent().
+   *
+   * @param    {string} site  - The site the audio belongs to
+   * @param    {string} id    - The audio ID to retrieve metadata for.
+   * @param    {string} token - The ViewLift API token.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        Object containing the audio data.
+   * @rejects  {RequestError}  Error making request to API.
+   * @rejects  {ParseError}    Error parsing the JSON API response.
+   */
+  _getAudio(site, id, token) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      Request({
+        url: 'https://' + self.stage + '-api.viewlift.com/content/audio',
+        method: 'GET',
+        qs: { 
+          id:   id,
+          site: site, 
+        },
+        headers: { 'Authorization': token }
+      }, (err, res, body) => {
+        if (err) {                              // If internal error making HTTP request...
+          console.log("Internal Error getting data for audio: %s - ", id, err);
+          reject(err);                          // Return error.
+        } else if (res.statusCode >= 400) {     // If API returns non-success status code...
+          console.log("API returned a %d error status while getting data for audio: %s - ", res.statusCode, id, body);
+          reject(res);                          // Return response info.
+        } else {                                // Else request OK, parse data...
+          try {                                 // Attempt to parse data from JSON...
+            const data = JSON.parse(body);
+            fulfill(data);                      // Return the data!
+          } catch (e) {
+            console.log("Error parsing data from JSON for audio %s - ", id, e);
+            reject(body);                       // Return response info. 
+          }
+        }
+      });
+    });
+  }
+
   /** 
    * Gets a API authorization token for a specified site by identity type.
    *

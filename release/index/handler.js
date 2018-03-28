@@ -12,6 +12,7 @@
  *  2. RELEASE.CONTENT.SERIES
  *  3. RELEASE.CONTENT.ARTICLE
  *  4. RELEASE.CONTENT.EVENT
+ *  5. RELEASE.CONTENT.AUDIO
  * =========================================================================
  * /////////////////////////////////////////////////////////////////////////
  * =========================================================================
@@ -35,13 +36,15 @@
 const Videos   = require('./content/videos');   // Import video    content type class
 const Series   = require('./content/series');   // Import series   content type class
 const Articles = require('./content/articles'); // Import articles content type class
-const Events   = require('./content/events'); // Import articles content type class
+const Events   = require('./content/events');   // Import events   content type class
+const Audio    = require('./content/audio');    // Import audio    content type class
 
 // Instantiate Required Content Classes:
 const videos   = new Videos();
 const series   = new Series();
 const articles = new Articles();
 const events   = new Events();
+const audio    = new Audio();
 
 /**
  * Lambda Entry Point
@@ -94,6 +97,12 @@ exports.handler = function(event, context, callback) {
        if (type === 'EVENT') processing.push(events.index(action, site, id));
        else console.log('Skipping unsupported event type - ', type);
        break;
+      // Index Audio Data:
+      case 'RELEASE.CONTENT.AUDIO':
+        type = image.contentType.S;
+        if (type === 'AUDIO') processing.push(audio.index(action, site, id));
+        else console.log('Skipping unsupported audio type - ', type);
+        break;
     }
   });
 

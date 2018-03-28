@@ -226,6 +226,49 @@
         "eventDate": {
           "type": "keyword"
         },
+        "audioTitle": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "audioDescription": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "audioAuthor": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "audioPrimaryCategory": {
+          "type": "text",
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "audioCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
+        "audioTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
         "status": {
           "type": "keyword"
         },
