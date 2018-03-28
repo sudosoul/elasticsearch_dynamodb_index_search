@@ -202,7 +202,7 @@ class ViewLift {
             .then(meta => {
               fulfill(meta);                // Return the event data.
           }).catch(e => {
-            console.log("Error getting article data from API - ", e);
+            console.log("Error getting event data from API - ", e);
             reject(e);                      // Error getting data, return error.
           });
       }).catch(e => {
@@ -273,7 +273,7 @@ class ViewLift {
             .then(meta => {
               fulfill(meta);                // Return the audio data.
           }).catch(e => {
-            console.log("Error getting article data from API - ", e);
+            console.log("Error getting audio data from API - ", e);
             reject(e);                      // Error getting data, return error.
           });
       }).catch(e => {
@@ -340,11 +340,11 @@ class ViewLift {
     return new Promise((fulfill, reject) => {
       self.generateToken(site)              // Generate API token 
         .then((token) => {
-          self._getAudio(site, id, token)   // Make the Get Photo request.
+          self._getPhoto(site, id, token)   // Make the Get Photo request.
             .then(meta => {
               fulfill(meta);                // Return the photo data.
           }).catch(e => {
-            console.log("Error getting article data from API - ", e);
+            console.log("Error getting photo data from API - ", e);
             reject(e);                      // Error getting data, return error.
           });
       }).catch(e => {
