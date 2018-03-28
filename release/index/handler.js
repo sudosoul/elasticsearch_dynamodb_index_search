@@ -106,6 +106,12 @@ exports.handler = function(event, context, callback) {
         if (type === 'AUDIO') processing.push(audio.index(action, site, id));
         else console.log('Skipping unsupported audio type - ', type);
         break;
+      // Index PhotoGallery Data:
+      case 'RELEASE.CONTENT.PHOTOGALLERY':
+        type = image.contentType.S;
+        if (type === 'IMAGE') processing.push(photos.index(action, site, id));
+        else console.log('Skipping unsupported photo type - ', type);
+        break;
     }
   });
 
