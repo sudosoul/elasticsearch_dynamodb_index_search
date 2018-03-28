@@ -13,6 +13,7 @@
  *  3. RELEASE.CONTENT.ARTICLE
  *  4. RELEASE.CONTENT.EVENT
  *  5. RELEASE.CONTENT.AUDIO
+ *  6. RELEASE.CONTENT.PHOTOGALLERY
  * =========================================================================
  * /////////////////////////////////////////////////////////////////////////
  * =========================================================================
@@ -38,6 +39,7 @@ const Series   = require('./content/series');   // Import series   content type 
 const Articles = require('./content/articles'); // Import articles content type class
 const Events   = require('./content/events');   // Import events   content type class
 const Audio    = require('./content/audio');    // Import audio    content type class
+const Photos   = require('./content/photos');   // Import photos   content type class
 
 // Instantiate Required Content Classes:
 const videos   = new Videos();
@@ -45,6 +47,7 @@ const series   = new Series();
 const articles = new Articles();
 const events   = new Events();
 const audio    = new Audio();
+const photos   = new Photos();
 
 /**
  * Lambda Entry Point

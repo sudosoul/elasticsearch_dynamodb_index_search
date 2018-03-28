@@ -269,6 +269,49 @@
             }
           }
         },
+        "photoTitle": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "photoDescription": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "photoAuthor": {
+          "type": "text", 
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en"
+        },
+        "photoPrimaryCategory": {
+          "type": "text",
+          "analyzer": "nGram_analyzer",
+          "search_analyzer": "standard_stopwords-en",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "photoCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
+        "photoTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "nGram_analyzer",
+              "search_analyzer": "standard_stopwords-en"
+            }
+          }
+        },
         "status": {
           "type": "keyword"
         },

@@ -285,7 +285,7 @@ class ViewLift {
 
   /**
    * Gets audio data from VL API for specified audio ID.
-   * Helper for getEvent().
+   * Helper for getAudio().
    *
    * @param    {string} site  - The site the audio belongs to
    * @param    {string} id    - The audio ID to retrieve metadata for.
@@ -319,6 +319,77 @@ class ViewLift {
             fulfill(data);                      // Return the data!
           } catch (e) {
             console.log("Error parsing data from JSON for audio %s - ", id, e);
+            reject(body);                       // Return response info. 
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Gets photo data from VL API for specified audio ID.
+   *
+   * @param    {string} site - The site the photo belongs to
+   * @param    {string} id   - The photo ID to retrieve data for.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        The photo data.
+   * @rejects  {RequestError}  Error making request to VL API.
+   */
+  getPhoto(site, id) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      self.generateToken(site)              // Generate API token 
+        .then((token) => {
+          self._getAudio(site, id, token)   // Make the Get Photo request.
+            .then(meta => {
+              fulfill(meta);                // Return the photo data.
+          }).catch(e => {
+            console.log("Error getting article data from API - ", e);
+            reject(e);                      // Error getting data, return error.
+          });
+      }).catch(e => {
+        console.log("Error getting API token for site %s - ", site, e);
+        reject(e);                          // Error getting VL API token, return error.
+      });
+    });
+  }
+
+  /**
+   * Gets photo data from VL API for specified photo ID.
+   * Helper for getPhoto().
+   *
+   * @param    {string} site  - The site the audio belongs to
+   * @param    {string} id    - The audio ID to retrieve metadata for.
+   * @param    {string} token - The ViewLift API token.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        Object containing the audio data.
+   * @rejects  {RequestError}  Error making request to API.
+   * @rejects  {ParseError}    Error parsing the JSON API response.
+   */
+  _getPhoto(site, id, token) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      Request({
+        url: 'https://' + self.stage + '-api.viewlift.com/content/photogallery',
+        method: 'GET',
+        qs: { 
+          id:   id,
+          site: site, 
+        },
+        headers: { 'Authorization': token }
+      }, (err, res, body) => {
+        if (err) {                              // If internal error making HTTP request...
+          console.log("Internal Error getting data for photo: %s - ", id, err);
+          reject(err);                          // Return error.
+        } else if (res.statusCode >= 400) {     // If API returns non-success status code...
+          console.log("API returned a %d error status while getting data for photo: %s - ", res.statusCode, id, body);
+          reject(res);                          // Return response info.
+        } else {                                // Else request OK, parse data...
+          try {                                 // Attempt to parse data from JSON...
+            const data = JSON.parse(body);
+            fulfill(data);                      // Return the data!
+          } catch (e) {
+            console.log("Error parsing data from JSON for photo %s - ", id, e);
             reject(body);                       // Return response info. 
           }
         }
