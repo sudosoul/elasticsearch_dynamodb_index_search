@@ -57,16 +57,17 @@ class Search {
    * @rejects  {Error}                  - An ElasticSearch Error
    */
   getSuggestions(searchTerm) {
+    const self = this;
     return new Promise((fulfill, reject) => {
       //** Make individual search query for each content type **//
       const suggestions = [];     // Hold each query results
       const response    = [];     // Hold the combined/formatted search response
-      suggestions.push(_getVideoSuggestions(searchTerm));     // Query Videos
-      suggestions.push(_getSeriesSuggestions(searchTerm));    // Query Series
-      suggestions.push(_getArticleSuggestions(searchTerm));   // Query Articles
-      suggestions.push(_getEventSuggestions(searchTerm));     // Query Events
-      suggestions.push(_getAudioSuggestions(searchTerm));     // Query Audio
-      suggestions.push(_getPhotoSuggestions(searchTerm));     // Query Photos
+      suggestions.push(self._getVideoSuggestions(searchTerm));     // Query Videos
+      suggestions.push(self._getSeriesSuggestions(searchTerm));    // Query Series
+      suggestions.push(self._getArticleSuggestions(searchTerm));   // Query Articles
+      suggestions.push(self._getEventSuggestions(searchTerm));     // Query Events
+      suggestions.push(self._getAudioSuggestions(searchTerm));     // Query Audio
+      suggestions.push(self._getPhotoSuggestions(searchTerm));     // Query Photos
       //** Return combined results **//
       Promise.all(suggestions)
         .then(results => {
