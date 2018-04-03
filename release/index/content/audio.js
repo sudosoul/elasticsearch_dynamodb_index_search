@@ -102,6 +102,7 @@ class Audio extends Index {
             audioPrimaryCategory : audio.gist.primaryCategory ? (Object.keys(audio.gist.primaryCategory).length !== 0 ? audio.gist.primaryCategory.title : null) : null,
             audioCategories      : audio.categories ? (audio.categories.length > 0 ? self._defineCategories(audio.categories) : null) : null,
             audioTags            : audio.tags ? (audio.tags.length > 0 ? self._defineTags(audio.tags) : null) : null,
+            audioPeople          : audio.creditBlocks ? (audio.creditBlocks.length > 0 ? self._definePeople(audio.creditBlocks) : null) : null,
             data                 : audio
           };
           // Fulfill with audio document:
@@ -125,6 +126,26 @@ class Audio extends Index {
       _categories.push({name: category.title});
     });
     return _categories;
+  }
+
+  /**
+   * Parses the `creditBlocks` field returned from API and
+   * prepares an array of objects containing the name of each
+   * actor and directors found in the `creditBlocks`.
+   *
+   * @param  {array} creditBlocks - The creditBlocks array returned from API.
+   * @return {array} Array of objects containing name of each actor/director.
+   */
+  _definePeople(creditBlocks) {
+    const people = [];
+    creditBlocks.forEach(block => {
+      if (block.credits) {
+        block.credits.forEach(credit => {
+          people.push({name: credit.title});
+        });
+      }
+    });
+    return people;
   }
 
   /**
