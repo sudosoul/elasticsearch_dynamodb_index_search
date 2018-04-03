@@ -53,12 +53,16 @@ class Search {
    *
    * @param    {string} searchTerm      - The search term / search prefix to search by.
    * @param    {string} types           - Comma separatted list of types, blank for all.
+   * @param    {number} offset          - Pagination offset, or the initial # of records to skip.
+   * @param    {number} limit           - Pagination limit, the # of records to return.
    * @return   {Promise.<array,Error>}  - Promise          
    * @fulfills {array}                  - Array containing all the search results
    * @rejects  {Error}                  - An ElasticSearch Error
    */
-  getSuggestions(searchTerm, types) {
+  getSuggestions(searchTerm, types, offset, limit) {
     const self = this;
+    if (!offset) offset = 0;   // Offset default to 0 if not defined.
+    if (!limit)  limit  = 100; // Limit default to 100 if not defined.
     return new Promise((fulfill, reject) => {
       const suggestions = [];     // Hold each query results
       const response    = [];     // Hold the combined/formatted search response
@@ -68,33 +72,33 @@ class Search {
         types.forEach(type => {
           switch (type) {
             case 'videos':
-              suggestions.push(self._getVideoSuggestions(searchTerm));     // Query Videos
+              suggestions.push(self._getVideoSuggestions(searchTerm, offset, limit));     // Query Videos
               break;
             case 'series':
-              suggestions.push(self._getSeriesSuggestions(searchTerm));    // Query Series
+              suggestions.push(self._getSeriesSuggestions(searchTerm, offset, limit));    // Query Series
               break;
             case 'articles':
-              suggestions.push(self._getArticleSuggestions(searchTerm));   // Query Articles
+              suggestions.push(self._getArticleSuggestions(searchTerm, offset, limit));   // Query Articles
               break;
             case 'events':
-              suggestions.push(self._getEventSuggestions(searchTerm));     // Query Events
+              suggestions.push(self._getEventSuggestions(searchTerm, offset, limit));     // Query Events
               break;
             case 'audio':
-              suggestions.push(self._getAudioSuggestions(searchTerm));     // Query Audio
+              suggestions.push(self._getAudioSuggestions(searchTerm, offset, limit));     // Query Audio
               break;
             case 'photos':
-              suggestions.push(self._getPhotoSuggestions(searchTerm));     // Query Photos
+              suggestions.push(self._getPhotoSuggestions(searchTerm, offset, limit));     // Query Photos
               break;
           }
         });
       } else {
         //** No type(s) defined, search all types **//   
-        suggestions.push(self._getVideoSuggestions(searchTerm));     // Query Videos
-        suggestions.push(self._getSeriesSuggestions(searchTerm));    // Query Series
-        suggestions.push(self._getArticleSuggestions(searchTerm));   // Query Articles
-        suggestions.push(self._getEventSuggestions(searchTerm));     // Query Events
-        suggestions.push(self._getAudioSuggestions(searchTerm));     // Query Audio
-        suggestions.push(self._getPhotoSuggestions(searchTerm));     // Query Photos
+        suggestions.push(self._getVideoSuggestions(searchTerm, offset, limit));     // Query Videos
+        suggestions.push(self._getSeriesSuggestions(searchTerm, offset, limit));    // Query Series
+        suggestions.push(self._getArticleSuggestions(searchTerm, offset, limit));   // Query Articles
+        suggestions.push(self._getEventSuggestions(searchTerm, offset, limit));     // Query Events
+        suggestions.push(self._getAudioSuggestions(searchTerm, offset, limit));     // Query Audio
+        suggestions.push(self._getPhotoSuggestions(searchTerm, offset, limit));     // Query Photos
       }
       //** Return combined results **//
       Promise.all(suggestions)
@@ -123,11 +127,12 @@ class Search {
    * @fulfills {array}                  - Search Results
    * @rejects  {Error}                  - An ElasticSearch Error
    */
-  _getVideoSuggestions(searchTerm) {
+  _getVideoSuggestions(searchTerm, offset, limit) {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 100,
+      from: offset,
+      size: limit,
       type: 'content',
       body: {
         query: {
@@ -152,11 +157,12 @@ class Search {
    * @fulfills {array}                  - Search Results
    * @rejects  {Error}                  - An ElasticSearch Error
    */
-  _getSeriesSuggestions(searchTerm) {
+  _getSeriesSuggestions(searchTerm, offset, limit) {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 100,
+      from: offset,
+      size: limit,
       type: 'content',
       body: {
         query: {
@@ -181,11 +187,12 @@ class Search {
    * @fulfills {array}                  - Search Results
    * @rejects  {Error}                  - An ElasticSearch Error
    */
-  _getArticleSuggestions(searchTerm) {
+  _getArticleSuggestions(searchTerm, offset, limit) {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 100,
+      from: offset,
+      size: limit,
       type: 'content',
       body: {
         query: {
@@ -210,11 +217,12 @@ class Search {
    * @fulfills {array}                  - Search Results
    * @rejects  {Error}                  - An ElasticSearch Error
    */
-  _getEventSuggestions(searchTerm) {
+  _getEventSuggestions(searchTerm, offset, limit) {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 100,
+      from: offset,
+      size: limit,
       type: 'content',
       body: {
         query: {
@@ -239,11 +247,12 @@ class Search {
    * @fulfills {array}                  - Search Results
    * @rejects  {Error}                  - An ElasticSearch Error
    */
-  _getAudioSuggestions(searchTerm) {
+  _getAudioSuggestions(searchTerm, offset, limit) {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 100,
+      from: offset,
+      size: limit,
       type: 'content',
       body: {
         query: {
@@ -268,11 +277,12 @@ class Search {
    * @fulfills {array}                  - Search Results
    * @rejects  {Error}                  - An ElasticSearch Error
    */
-  _getPhotoSuggestions(searchTerm) {
+  _getPhotoSuggestions(searchTerm, offset, limit) {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 100,
+      from: offset,
+      size: limit,
       type: 'content',
       body: {
         query: {
