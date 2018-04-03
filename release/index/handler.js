@@ -33,21 +33,13 @@
  * @version 2.0.0
  */
 
-// Import Dependencies:
-const Videos   = require('./content/videos');   // Import video    content type class
-const Series   = require('./content/series');   // Import series   content type class
-const Articles = require('./content/articles'); // Import articles content type class
-const Events   = require('./content/events');   // Import events   content type class
-const Audio    = require('./content/audio');    // Import audio    content type class
-const Photos   = require('./content/photos');   // Import photos   content type class
-
-// Instantiate Required Content Classes:
-const videos   = new Videos();
-const series   = new Series();
-const articles = new Articles();
-const events   = new Events();
-const audio    = new Audio();
-const photos   = new Photos();
+// Import & Instantiate Dependencies:
+const Videos   = new require('./content/videos');   // Import video    content type class
+const Series   = new require('./content/series');   // Import series   content type class
+const Articles = new require('./content/articles'); // Import articles content type class
+const Events   = new require('./content/events');   // Import events   content type class
+const Audio    = new require('./content/audio');    // Import audio    content type class
+const Photos   = new require('./content/photos');   // Import photos   content type class
 
 /**
  * Lambda Entry Point
@@ -82,34 +74,34 @@ exports.handler = function(event, context, callback) {
       // Index Video Data:
       case 'RELEASE.CONTENT.CONTENT_METADATA':
         type = image.objectKey.S; 
-        if (type === 'video') processing.push(videos.index(action, site, id));
+        if (type === 'video') processing.push(Videos.index(action, site, id));
         else console.log('Skipping unsupported metadata type - ', type);
         break;     
       // Index Series Data:
       case 'RELEASE.CONTENT.SERIES':       
-        if (!image.objectType) processing.push(series.index(action, site, id, image)); // Only index series that have no objectType defined
+        if (!image.objectType) processing.push(Series.index(action, site, id, image)); // Only index series that have no objectType defined
         else console.log('Skipping unsupported series type');
         break;     
       // Index Article Data:
       case 'RELEASE.CONTENT.ARTICLE':
-        processing.push(articles.index(action, site, id));
+        processing.push(Articles.index(action, site, id));
         break;
       // Index Event Data:
       case 'RELEASE.CONTENT.EVENT':
        type = image.contentType.S;
-       if (type === 'EVENT') processing.push(events.index(action, site, id));
+       if (type === 'EVENT') processing.push(Events.index(action, site, id));
        else console.log('Skipping unsupported event type - ', type);
        break;
       // Index Audio Data:
       case 'RELEASE.CONTENT.AUDIO':
         type = image.contentType.S;
-        if (type === 'AUDIO') processing.push(audio.index(action, site, id));
+        if (type === 'AUDIO') processing.push(Audio.index(action, site, id));
         else console.log('Skipping unsupported audio type - ', type);
         break;
       // Index PhotoGallery Data:
       case 'RELEASE.CONTENT.PHOTOGALLERY':
         type = image.contentType.S;
-        if (type === 'IMAGE') processing.push(photos.index(action, site, id));
+        if (type === 'IMAGE') processing.push(Photos.index(action, site, id));
         else console.log('Skipping unsupported photo type - ', type);
         break;
     }

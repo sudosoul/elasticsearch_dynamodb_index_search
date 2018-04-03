@@ -127,7 +127,7 @@ class Search {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 18,
+      size: 100,
       type: 'content',
       body: {
         query: {
@@ -136,7 +136,10 @@ class Search {
             type     : 'phrase',
             fields   : ['videoTitle', 'videoPrimaryCategory', 'videoCategories.name', 'videoPeople.name', 'videoTags.name']
           }
-        }
+        },
+        sort: [
+          {'year': 'desc'}
+        ]
       }
     });
   }
@@ -153,7 +156,7 @@ class Search {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 18,
+      size: 100,
       type: 'content',
       body: {
         query: {
@@ -162,7 +165,10 @@ class Search {
             type     : 'phrase',
             fields   : ['seriesTitle', 'seriesPrimaryCategory', 'seriesCategories.name', 'seriesPeople.name', 'seriesTags.name']
           }
-        }
+        },
+        sort: [
+          {'year': 'desc'}
+        ]
       }
     });
   }
@@ -179,7 +185,7 @@ class Search {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 18,
+      size: 100,
       type: 'content',
       body: {
         query: {
@@ -188,7 +194,10 @@ class Search {
             type     : 'phrase',
             fields   : ['articleTitle', 'articleAuthor', 'articlePrimaryCategory', 'articleCategories.name', 'articleTags.name']
           }
-        }
+        },
+        sort: [
+          {'year': 'desc'}
+        ]
       }
     });
   }
@@ -205,7 +214,7 @@ class Search {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 18,
+      size: 100,
       type: 'content',
       body: {
         query: {
@@ -214,7 +223,10 @@ class Search {
             type     : 'phrase',
             fields   : ['eventTitle', 'eventPrimaryCategory', 'eventCategories.name', 'eventTags.name']
           }
-        }
+        },
+        sort: [
+          {'year': 'desc'}
+        ]
       }
     });
   }
@@ -231,7 +243,7 @@ class Search {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 18,
+      size: 100,
       type: 'content',
       body: {
         query: {
@@ -240,7 +252,10 @@ class Search {
             type     : 'phrase',
             fields   : ['audioTitle', 'audioAuthor', 'audioPrimaryCategory', 'audioCategories.name', 'audioTags.name']
           }
-        }
+        },
+        sort: [
+          {'year': 'desc'}
+        ]
       }
     });
   }
@@ -257,7 +272,7 @@ class Search {
     const self = this;
     return this.es.search({
       index: self.index,
-      size: 18,
+      size: 100,
       type: 'content',
       body: {
         query: {
@@ -266,7 +281,10 @@ class Search {
             type     : 'phrase',
             fields   : ['photoTitle', 'photoAuthor', 'photoPrimaryCategory', 'photoCategories.name', 'photoTags.name']
           }
-        }
+        },
+        sort: [
+          {'year': 'desc'}
+        ]
       }
     });
   }
