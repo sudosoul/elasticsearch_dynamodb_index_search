@@ -29,7 +29,7 @@ const Search = require('./search');
 exports.handler = function(event, context, callback) {
   const search = new Search(process.env.ES_ENDPOINT, process.env.ES_VERSION, event.queryStringParameters.site); // Instantiate Search Class
   //** Get Content Suggestions **//
-  search.getSuggestions(event.queryStringParameters.searchTerm)
+  search.getSuggestions(event.queryStringParameters.searchTerm, event.queryStringParameters.types)
     .then(results => {
       return callback(null, prepareResponse(200, results)); // Return array of results back to client!
   }).catch(e => {

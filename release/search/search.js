@@ -48,26 +48,54 @@ class Search {
   }
 
   /**
-   * Gets suggestions for all content types by performing individual search queries
-   * on each content type (videos, series, audio, events, articles, photos).
+   * Gets suggestions for content types specified by `types, by performing individual search queries
+   * on each relevant content type (videos, series, audio, events, articles, photos).
    *
-   * @param    {string} searchTerm      - The search term / search prefix to search by
+   * @param    {string} searchTerm      - The search term / search prefix to search by.
+   * @param    {string} types           - Comma separatted list of types, blank for all.
    * @return   {Promise.<array,Error>}  - Promise          
    * @fulfills {array}                  - Array containing all the search results
    * @rejects  {Error}                  - An ElasticSearch Error
    */
-  getSuggestions(searchTerm) {
+  getSuggestions(searchTerm, types) {
     const self = this;
     return new Promise((fulfill, reject) => {
-      //** Make individual search query for each content type **//
       const suggestions = [];     // Hold each query results
       const response    = [];     // Hold the combined/formatted search response
-      suggestions.push(self._getVideoSuggestions(searchTerm));     // Query Videos
-      suggestions.push(self._getSeriesSuggestions(searchTerm));    // Query Series
-      suggestions.push(self._getArticleSuggestions(searchTerm));   // Query Articles
-      suggestions.push(self._getEventSuggestions(searchTerm));     // Query Events
-      suggestions.push(self._getAudioSuggestions(searchTerm));     // Query Audio
-      suggestions.push(self._getPhotoSuggestions(searchTerm));     // Query Photos
+      //** Perform search based on type(s) defined **//
+      if (types) { 
+        types = types.split(',');
+        types.forEach(type => {
+          switch (type) {
+            case 'videos':
+              suggestions.push(self._getVideoSuggestions(searchTerm));     // Query Videos
+              break;
+            case 'series':
+              suggestions.push(self._getSeriesSuggestions(searchTerm));    // Query Series
+              break;
+            case 'articles':
+              suggestions.push(self._getArticleSuggestions(searchTerm));   // Query Articles
+              break;
+            case 'events':
+              suggestions.push(self._getEventSuggestions(searchTerm));     // Query Events
+              break;
+            case 'audio':
+              suggestions.push(self._getAudioSuggestions(searchTerm));     // Query Audio
+              break;
+            case 'photos':
+              suggestions.push(self._getPhotoSuggestions(searchTerm));     // Query Photos
+              break;
+          }
+        });
+      } else {
+        //** No type(s) defined, search all types **//   
+        suggestions.push(self._getVideoSuggestions(searchTerm));     // Query Videos
+        suggestions.push(self._getSeriesSuggestions(searchTerm));    // Query Series
+        suggestions.push(self._getArticleSuggestions(searchTerm));   // Query Articles
+        suggestions.push(self._getEventSuggestions(searchTerm));     // Query Events
+        suggestions.push(self._getAudioSuggestions(searchTerm));     // Query Audio
+        suggestions.push(self._getPhotoSuggestions(searchTerm));     // Query Photos
+      }
       //** Return combined results **//
       Promise.all(suggestions)
         .then(results => {
@@ -102,12 +130,10 @@ class Search {
       size: 18,
       type: 'content',
       body: {
-        min_score: 12,
         query: {
           multi_match: {
             query    : searchTerm,
-            type     : 'best_fields',
-            analyzer : 'nGram_analyzer',
+            type     : 'phrase',
             fields   : ['videoTitle', 'videoPrimaryCategory', 'videoCategories.name', 'videoPeople.name', 'videoTags.name']
           }
         }
@@ -130,12 +156,10 @@ class Search {
       size: 18,
       type: 'content',
       body: {
-        min_score: 12,
         query: {
           multi_match: {
             query    : searchTerm,
-            type     : 'best_fields',
-            analyzer : 'nGram_analyzer',
+            type     : 'phrase',
             fields   : ['seriesTitle', 'seriesPrimaryCategory', 'seriesCategories.name', 'seriesPeople.name', 'seriesTags.name']
           }
         }
@@ -158,12 +182,10 @@ class Search {
       size: 18,
       type: 'content',
       body: {
-        min_score: 12,
         query: {
           multi_match: {
             query    : searchTerm,
-            type     : 'best_fields',
-            analyzer : 'nGram_analyzer',
+            type     : 'phrase',
             fields   : ['articleTitle', 'articleAuthor', 'articlePrimaryCategory', 'articleCategories.name', 'articleTags.name']
           }
         }
@@ -186,12 +208,10 @@ class Search {
       size: 18,
       type: 'content',
       body: {
-        min_score: 12,
         query: {
           multi_match: {
             query    : searchTerm,
-            type     : 'best_fields',
-            analyzer : 'nGram_analyzer',
+            type     : 'phrase',
             fields   : ['eventTitle', 'eventPrimaryCategory', 'eventCategories.name', 'eventTags.name']
           }
         }
@@ -214,12 +234,10 @@ class Search {
       size: 18,
       type: 'content',
       body: {
-        min_score: 12,
         query: {
           multi_match: {
             query    : searchTerm,
-            type     : 'best_fields',
-            analyzer : 'nGram_analyzer',
+            type     : 'phrase',
             fields   : ['audioTitle', 'audioAuthor', 'audioPrimaryCategory', 'audioCategories.name', 'audioTags.name']
           }
         }
@@ -242,12 +260,10 @@ class Search {
       size: 18,
       type: 'content',
       body: {
-        min_score: 12,
         query: {
           multi_match: {
             query    : searchTerm,
-            type     : 'best_fields',
-            analyzer : 'nGram_analyzer',
+            type     : 'phrase',
             fields   : ['photoTitle', 'photoAuthor', 'photoPrimaryCategory', 'photoCategories.name', 'photoTags.name']
           }
         }

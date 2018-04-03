@@ -10,31 +10,29 @@
       "auto_expand_replicas": "0-all"
     },
     "analysis": {
-      "analyzer": {
-        "nGram_analyzer": {
-          "type": "custom",
-          "tokenizer": "nGram_tokenizer",
-          "filter": [
-            "lowercase"
-          ]
-        },
-        "standard_stopwords-en": {
-          "type": "standard",
-          "stopwords": "_english_"
-        }
+      "filter": {
+         "english_poss_stemmer": {
+            "type": "stemmer",
+            "name": "possessive_english"
+         },
+         "edge_ngram": {
+           "type": "edge_ngram",
+           "min_gram": "2",
+           "max_gram": "25",
+           "token_chars": ["letter", "digit"]
+         }
       },
-      "tokenizer": {
-        "nGram_tokenizer": {
-          "type": "edge_ngram",
-          "min_gram": 1,
-          "max_gram": 20,
-          "token_chars": [
-            "letter",
-            "digit"
-          ]
-        }
+      "analyzer": {
+         "edge_ngram_analyzer": {
+           "filter": ["lowercase", "english_poss_stemmer", "edge_ngram"],
+           "tokenizer": "standard"
+         },
+         "keyword_analyzer": {
+           "filter": ["lowercase", "english_poss_stemmer"],
+           "tokenizer": "standard"
+         }
       }
-    }
+   }
   },
   "mappings": {
     "content": {
@@ -44,18 +42,18 @@
         },
         "videoTitle": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"
         },
         "videoDescription": {
           "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"
         },
         "videoPrimaryCategory": {
           "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
           "fields": {
             "sort": {
               "type": "keyword"
@@ -66,8 +64,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"           
             }
           }
         },
@@ -75,8 +73,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"             
             }
           }
         },
@@ -84,25 +82,26 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"
+              
             }
           }
         },     
         "seriesTitle": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"      
         },
         "seriesDescription": {
           "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"
         },
         "seriesPrimaryCategory": {
           "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
           "fields": {
             "sort": {
               "type": "keyword"
@@ -113,8 +112,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"            
             }
           }
         },
@@ -122,8 +121,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"            
             }
           }
         },
@@ -131,30 +130,30 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"            
             }
           }
         },  
         "articleTitle": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
         },
         "articleDescription": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"
         },
         "articleAuthor": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
         },
         "articlePrimaryCategory": {
           "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
           "fields": {
             "sort": {
               "type": "keyword"
@@ -165,8 +164,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
             }
           }
         },
@@ -174,25 +173,25 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
             }
           }
         },
         "eventTitle": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
         },
         "eventDescription": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
         },
         "eventPrimaryCategory": {
           "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
           "fields": {
             "sort": {
               "type": "keyword"
@@ -203,8 +202,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
             }
           }
         },
@@ -212,8 +211,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
             }
           }
         },
@@ -228,23 +227,23 @@
         },
         "audioTitle": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
         },
         "audioDescription": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"          
         },
         "audioAuthor": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"          
         },
         "audioPrimaryCategory": {
           "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
           "fields": {
             "sort": {
               "type": "keyword"
@@ -255,8 +254,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
             }
           }
         },
@@ -264,30 +263,30 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"             
             }
           }
         },
         "photoTitle": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
         },
         "photoDescription": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
         },
         "photoAuthor": {
           "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"          
         },
         "photoPrimaryCategory": {
           "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
           "fields": {
             "sort": {
               "type": "keyword"
@@ -298,8 +297,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
             }
           }
         },
@@ -307,8 +306,8 @@
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
             }
           }
         },
