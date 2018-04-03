@@ -259,7 +259,7 @@ class Search {
           multi_match: {
             query    : searchTerm,
             type     : 'phrase',
-            fields   : ['audioTitle', 'audioAuthor', 'audioPrimaryCategory', 'audioCategories.name', 'audioTags.name']
+            fields   : ['audioTitle', 'audioAuthor', 'audioPrimaryCategory', 'audioCategories.name', 'audioTags.name', 'audioPeople.name']
           }
         },
         sort: [
