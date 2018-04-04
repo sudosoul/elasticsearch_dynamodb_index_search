@@ -101,7 +101,7 @@ class Photos extends Index {
             photoPrimaryCategory : photo.gist.primaryCategory ? (Object.keys(photo.gist.primaryCategory).length !== 0 ? photo.gist.primaryCategory.title : null) : null,
             photoCategories      : photo.categories ? (photo.categories.length > 0 ? self._defineCategories(photo.categories) : null) : null,
             photoTags            : photo.tags ? (photo.tags.length > 0 ? self._defineTags(photo.tags) : null) : null,
-            addedDate            : photo.gist.addedDate,
+            publishedDate        : photo.gist.publishedDate,
             data                 : photo
           };
           // Fulfill with photo document:
