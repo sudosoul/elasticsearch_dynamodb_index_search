@@ -92,6 +92,7 @@ class Series extends Index {
       seriesPeople          : item.creditBlocks ? (item.creditBlocks.length > 0 ? this._definePeople(item.creditBlocks) : null) : null,
       seriesTags            : item.tags ? (item.tags.length > 0 ? this._defineTags(item.tags) : null) : null,
       status                : item.showDetails ? item.showDetails.status : null,
+      addedDate             : item.gist.addedDate,
       data                  : item
     };
     return doc;

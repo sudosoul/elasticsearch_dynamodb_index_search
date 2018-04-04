@@ -85,39 +85,40 @@ exports.handler = function(event, context, callback) {
         type   = image.objectKey.S; 
         status = image.status ? image.status.S : null;
         if (type === 'video' && status === 'open') processing.push(videos.index(action, site, id));
-        else console.log('Skipping unsupported metadata type - ', type);
+        else console.log('Skipping unsupported or closed metadata content.');
         break;     
       // Index Series Data:
       case 'PROD.CONTENT.SERIES':  
         status = image.showDetails ? (image.showDetails.M.status ? image.showDetails.M.status.S : null) : null;   
         if (!image.objectType && status === 'open') processing.push(series.index(action, site, id, image)); // Only index series that have no objectType defined
-        else console.log('Skipping unsupported series type');
+        else console.log('Skipping unsupported or closed series content.');
         break;     
       // Index Article Data:
       case 'PROD.CONTENT.ARTICLE':
         status = image.contentStatus ? image.contentStatus.S : null;
         if (status === 'open') processing.push(articles.index(action, site, id));
+        else console.log('Skipping unsupported or closed article content.');
         break;
       // Index Event Data:
       case 'PROD.CONTENT.EVENT':
        type   = image.contentType.S;
        status = image.contentStatus ? image.contentStatus.S : null;
        if (type === 'EVENT' && status === 'open') processing.push(events.index(action, site, id));
-       else console.log('Skipping unsupported event type - ', type);
+       else console.log('Skipping unsupported or closed event content.');
        break;
       // Index Audio Data:
       case 'PROD.CONTENT.AUDIO':
         type   = image.contentType.S;
         status = image.contentStatus ? image.contentStatus.S : null;
         if (type === 'AUDIO' && status === 'open') processing.push(audio.index(action, site, id));
-        else console.log('Skipping unsupported audio type - ', type);
+        else console.log('Skipping unsupported or closed audio content.');
         break;
       // Index PhotoGallery Data:
       case 'PROD.CONTENT.PHOTOGALLERY':
         type   = image.contentType.S;
         status = image.contentStatus ? image.contentStatus.S : null;
         if (type === 'IMAGE' && status === 'open') processing.push(photos.index(action, site, id));
-        else console.log('Skipping unsupported photo type - ', type);
+        else console.log('Skipping unsupported or closed photo content.');
         break;
     }
   });

@@ -107,6 +107,7 @@ class Videos extends Index {
             year                 : video.gist.year,
             parentalRating       : video.parentalRating,
             status               : video.contentDetails.status,
+            addedDate            : video.gist.addedDate,
             data                 : video
           };
           // Fulfill with video document:
