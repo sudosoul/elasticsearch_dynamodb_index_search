@@ -77,38 +77,45 @@ exports.handler = function(event, context, callback) {
     const id     = record.dynamodb.Keys.id.S;
     const image  = record.dynamodb.NewImage ? record.dynamodb.NewImage : record.dynamodb.OldImage; // Set image to NewImage if NewImage defined (INSERT/MODIFY events) else set it to OldImage (REMOVE event)
     let   type   = null;
+    let   status = null;
     //** Index According to Table **//
     switch (table) {  
       // Index Video Data:
       case 'RELEASE.CONTENT.CONTENT_METADATA':
-        type = image.objectKey.S; 
-        if (type === 'video') processing.push(videos.index(action, site, id));
+        type   = image.objectKey.S; 
+        status = image.status ? image.status.S : null;
+        if (type === 'video' && status === 'open') processing.push(videos.index(action, site, id));
         else console.log('Skipping unsupported metadata type - ', type);
         break;     
       // Index Series Data:
-      case 'RELEASE.CONTENT.SERIES':       
-        if (!image.objectType) processing.push(series.index(action, site, id, image)); // Only index series that have no objectType defined
+      case 'RELEASE.CONTENT.SERIES':  
+        status = image.showDetails ? (image.showDetails.M.status ? image.showDetails.M.status.S : null) : null;   
+        if (!image.objectType && status === 'open') processing.push(series.index(action, site, id, image)); // Only index series that have no objectType defined
         else console.log('Skipping unsupported series type');
         break;     
       // Index Article Data:
       case 'RELEASE.CONTENT.ARTICLE':
-        processing.push(articles.index(action, site, id));
+        status = image.contentStatus ? image.contentStatus.S : null;
+        if (status === 'open') processing.push(articles.index(action, site, id));
         break;
       // Index Event Data:
       case 'RELEASE.CONTENT.EVENT':
-       type = image.contentType.S;
+       type   = image.contentType.S;
+       status = image.contentStatus ? image.contentStatus.S : null;
        if (type === 'EVENT') processing.push(events.index(action, site, id));
        else console.log('Skipping unsupported event type - ', type);
        break;
       // Index Audio Data:
       case 'RELEASE.CONTENT.AUDIO':
-        type = image.contentType.S;
+        type   = image.contentType.S;
+        status = image.contentStatus ? image.contentStatus.S : null;
         if (type === 'AUDIO') processing.push(audio.index(action, site, id));
         else console.log('Skipping unsupported audio type - ', type);
         break;
       // Index PhotoGallery Data:
       case 'RELEASE.CONTENT.PHOTOGALLERY':
-        type = image.contentType.S;
+        type   = image.contentType.S;
+        status = image.contentStatus ? image.contentStatus.S : null;
         if (type === 'IMAGE') processing.push(photos.index(action, site, id));
         else console.log('Skipping unsupported photo type - ', type);
         break;
