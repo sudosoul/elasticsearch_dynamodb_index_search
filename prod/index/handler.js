@@ -102,21 +102,21 @@ exports.handler = function(event, context, callback) {
       case 'PROD.CONTENT.EVENT':
        type   = image.contentType.S;
        status = image.contentStatus ? image.contentStatus.S : null;
-       if (type === 'EVENT') processing.push(events.index(action, site, id));
+       if (type === 'EVENT' && status === 'open') processing.push(events.index(action, site, id));
        else console.log('Skipping unsupported event type - ', type);
        break;
       // Index Audio Data:
       case 'PROD.CONTENT.AUDIO':
         type   = image.contentType.S;
         status = image.contentStatus ? image.contentStatus.S : null;
-        if (type === 'AUDIO') processing.push(audio.index(action, site, id));
+        if (type === 'AUDIO' && status === 'open') processing.push(audio.index(action, site, id));
         else console.log('Skipping unsupported audio type - ', type);
         break;
       // Index PhotoGallery Data:
       case 'PROD.CONTENT.PHOTOGALLERY':
         type   = image.contentType.S;
         status = image.contentStatus ? image.contentStatus.S : null;
-        if (type === 'IMAGE') processing.push(photos.index(action, site, id));
+        if (type === 'IMAGE' && status === 'open') processing.push(photos.index(action, site, id));
         else console.log('Skipping unsupported photo type - ', type);
         break;
     }
