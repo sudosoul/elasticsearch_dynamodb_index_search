@@ -4,6 +4,7 @@
   "description": "ElasticSearch Indexer",
   "main": "indexer.js",
   "dependencies": {
+    "aws-sdk": "^2.213.1",
     "elasticsearch": "^14.1.0",
     "request": "^2.83.0"
   },

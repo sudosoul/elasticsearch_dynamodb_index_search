@@ -1,29 +1,53 @@
 /**
  * Lambda Function to Index Data in ElasticSearch
- *
- * This service is attached as a trigger to the following DynamoDB tables: 
- *  RELEASE.CONTENT.CONTENT_METADATA.
- *
+ * /////////////////////////////////////////////////////////////////////////
  * Whenever a change is made to the table (INSERT, REMOVE, MODIFY), this service is triggered and
  * receives the updated data. This service will parse the required data, and update the ElasticSearch
  * index accordingly. 
- *
+ * /////////////////////////////////////////////////////////////////////////
+ * =========================================================================
+ * This service is attached as a trigger to the following DynamoDB tables: 
+ * -------------------------------------------------------------------------
+ *  1. PROD.CONTENT.CONTENT_METADATA
+ *  2. PROD.CONTENT.SERIES
+ *  3. PROD.CONTENT.ARTICLE
+ *  4. PROD.CONTENT.EVENT
+ *  5. PROD.CONTENT.AUDIO
+ *  6. PROD.CONTENT.PHOTOGALLERY
+ * =========================================================================
+ * /////////////////////////////////////////////////////////////////////////
+ * =========================================================================
  * REQUIRED ENVIRONMENT VARIABLES
- *  AWS_REGION      - The AWS Region, available by default by Lambda.
- *  STAGE           - The development stage (dev, staging, prod).
- *  ES_ENDPOINT     - The URL endpoint to the ElasticSearch cluster.
- *  ES_VERSION      - The version of ElasticSearch used on our cluster.
- *  
- *
- * @requires api.js
- * @requires index.js
- *
+ * -------------------------------------------------------------------------
+ *  1. AWS_REGION      - The AWS Region, available by default by Lambda.
+ *  2. STAGE           - The development stage (dev, staging, prod).
+ *  3. ES_ENDPOINT     - The URL endpoint to the ElasticSearch cluster.
+ *  4. ES_VERSION      - The version of ElasticSearch used on our cluster.
+ * =========================================================================  
+ * /////////////////////////////////////////////////////////////////////////
+ * @requires content/videos.js
+ * @requires content/series.js
+ * @requires content/articles.js
+ * /////////////////////////////////////////////////////////////////////////
  * @author Rob Mullins <rob@viewlift.com>
  * @version 2.0.0
  */
 
-// Import Dependencies:
-const Content = require('./Content/content');
+// Import & Instantiate Dependencies:
+const Videos   = new require('./content/videos');   // Import video    content type class
+const Series   = new require('./content/series');   // Import series   content type class
+const Articles = new require('./content/articles'); // Import articles content type class
+const Events   = new require('./content/events');   // Import events   content type class
+const Audio    = new require('./content/audio');    // Import audio    content type class
+const Photos   = new require('./content/photos');   // Import photos   content type class
+
+// Instantiate Required Content Classes:
+const videos   = new Videos();
+const series   = new Series();
+const articles = new Articles();
+const events   = new Events();
+const audio    = new Audio();
+const photos   = new Photos();
 
 /**
  * Lambda Entry Point
@@ -42,19 +66,58 @@ exports.handler = function(event, context, callback) {
   if (!process.env.STAGE || !process.env.ES_ENDPOINT || !process.env.ES_VERSION) {
     console.log('Error - environment variables not set. Required environment variables are STAGE, ES_ENDPOINT, and ES_VERSION');
     return callback('Not all required environment variables were set.');
-  }
-  //** Instantiate required classes **//
-  const content = new Content(); 
-
+  }  
   //** Iterate through DynamoDB Events **//
   const processing = []; 
   event.Records.forEach(record => {
+    //** Parse Table Name, Event Action, Site, ID, DynamoDB Image **//
+    const table  = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,''); // Get Table Name from ARN
+    const action = (record.eventName === 'INSERT' || record.eventName === 'MODIFY') ? 'INSERT' : 'REMOVE';        // Determine action to perform on index (insert or remove)
+    const site   = record.dynamodb.Keys.site.S;
+    const id     = record.dynamodb.Keys.id.S;
+    const image  = record.dynamodb.NewImage ? record.dynamodb.NewImage : record.dynamodb.OldImage; // Set image to NewImage if NewImage defined (INSERT/MODIFY events) else set it to OldImage (REMOVE event)
+    let   type   = null;
+    let   status = null;
     //** Index According to Table **//
-    const table = record.eventSourceARN.replace(/arn:aws:dynamodb:.*?:.*?:table\//,'').replace(/\/stream.*/,''); // Get Table Name from ARN
-    switch (table) {
-      // Index Content Data:
-      case 'RELEASE.CONTENT.CONTENT_METADATA':
-        processing.push(content.index(record));
+    switch (table) {  
+      // Index Video Data:
+      case 'PROD.CONTENT.CONTENT_METADATA':
+        type   = image.objectKey.S; 
+        status = image.status ? image.status.S : null;
+        if (type === 'video' && status === 'open') processing.push(videos.index(action, site, id));
+        else console.log('Skipping unsupported metadata type - ', type);
+        break;     
+      // Index Series Data:
+      case 'PROD.CONTENT.SERIES':  
+        status = image.showDetails ? (image.showDetails.M.status ? image.showDetails.M.status.S : null) : null;   
+        if (!image.objectType && status === 'open') processing.push(series.index(action, site, id, image)); // Only index series that have no objectType defined
+        else console.log('Skipping unsupported series type');
+        break;     
+      // Index Article Data:
+      case 'PROD.CONTENT.ARTICLE':
+        status = image.contentStatus ? image.contentStatus.S : null;
+        if (status === 'open') processing.push(articles.index(action, site, id));
+        break;
+      // Index Event Data:
+      case 'PROD.CONTENT.EVENT':
+       type   = image.contentType.S;
+       status = image.contentStatus ? image.contentStatus.S : null;
+       if (type === 'EVENT') processing.push(events.index(action, site, id));
+       else console.log('Skipping unsupported event type - ', type);
+       break;
+      // Index Audio Data:
+      case 'PROD.CONTENT.AUDIO':
+        type   = image.contentType.S;
+        status = image.contentStatus ? image.contentStatus.S : null;
+        if (type === 'AUDIO') processing.push(audio.index(action, site, id));
+        else console.log('Skipping unsupported audio type - ', type);
+        break;
+      // Index PhotoGallery Data:
+      case 'PROD.CONTENT.PHOTOGALLERY':
+        type   = image.contentType.S;
+        status = image.contentStatus ? image.contentStatus.S : null;
+        if (type === 'IMAGE') processing.push(photos.index(action, site, id));
+        else console.log('Skipping unsupported photo type - ', type);
         break;
     }
   });

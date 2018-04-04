@@ -10,82 +10,313 @@
       "auto_expand_replicas": "0-all"
     },
     "analysis": {
-      "analyzer": {
-        "nGram_analyzer": {
-          "type": "custom",
-          "tokenizer": "nGram_tokenizer",
-          "filter": [
-            "lowercase"
-          ]
-        },
-        "standard_stopwords-en": {
-          "type": "standard",
-          "stopwords": "_english_"
-        }
+      "filter": {
+         "english_poss_stemmer": {
+            "type": "stemmer",
+            "name": "possessive_english"
+         },
+         "edge_ngram": {
+           "type": "edge_ngram",
+           "min_gram": "2",
+           "max_gram": "25",
+           "token_chars": ["letter", "digit"]
+         }
       },
-      "tokenizer": {
-        "nGram_tokenizer": {
-          "type": "edge_ngram",
-          "min_gram": 1,
-          "max_gram": 20,
-          "token_chars": [
-            "letter",
-            "digit"
-          ]
-        }
+      "analyzer": {
+         "edge_ngram_analyzer": {
+           "filter": ["lowercase", "english_poss_stemmer", "edge_ngram"],
+           "tokenizer": "standard"
+         },
+         "keyword_analyzer": {
+           "filter": ["lowercase", "english_poss_stemmer"],
+           "tokenizer": "standard"
+         }
       }
-    }
+   }
   },
   "mappings": {
-    "videos": {
+    "content": {
       "properties": {
-        "title": {
-          "type": "text", 
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
-        },
         "type": {
           "type": "keyword"
         },
-        "description": {
-          "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en"
+        "videoTitle": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"
         },
-        "primaryCategory": {
+        "videoDescription": {
           "type": "text",
-          "analyzer": "nGram_analyzer",
-          "search_analyzer": "standard_stopwords-en",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"
+        },
+        "videoPrimaryCategory": {
+          "type": "text",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
           "fields": {
             "sort": {
               "type": "keyword"
             }
           }
         },
-        "categories": {
+        "videoCategories": {
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"           
             }
           }
         },
-        "people": {
+        "videoPeople": {
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"             
             }
           }
         },
-        "tags": {
+        "videoTags": {
           "properties": {
             "name": {
               "type": "text",
-              "analyzer": "nGram_analyzer",
-              "search_analyzer": "standard_stopwords-en"
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"
+              
+            }
+          }
+        },     
+        "seriesTitle": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"      
+        },
+        "seriesDescription": {
+          "type": "text",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"
+        },
+        "seriesPrimaryCategory": {
+          "type": "text",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "seriesCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"            
+            }
+          }
+        },
+        "seriesPeople": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"            
+            }
+          }
+        },
+        "seriesTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"            
+            }
+          }
+        },  
+        "articleTitle": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
+        },
+        "articleDescription": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"
+        },
+        "articleAuthor": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
+        },
+        "articlePrimaryCategory": {
+          "type": "text",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "articleCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
+            }
+          }
+        },
+        "articleTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
+            }
+          }
+        },
+        "eventTitle": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
+        },
+        "eventDescription": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
+        },
+        "eventPrimaryCategory": {
+          "type": "text",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "eventCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
+            }
+          }
+        },
+        "eventTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
+            }
+          }
+        },
+        "eventVenue": {
+          "type": "keyword"
+        },
+        "eventTime": {
+          "type": "keyword"
+        },
+        "eventDate": {
+          "type": "keyword"
+        },
+        "audioTitle": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
+        },
+        "audioDescription": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"          
+        },
+        "audioAuthor": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"          
+        },
+        "audioPrimaryCategory": {
+          "type": "text",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "audioCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
+            }
+          }
+        },
+        "audioTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"             
+            }
+          }
+        },
+        "audioPeople": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"             
+            }
+          }
+        },
+        "photoTitle": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
+        },
+        "photoDescription": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"         
+        },
+        "photoAuthor": {
+          "type": "text", 
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer"          
+        },
+        "photoPrimaryCategory": {
+          "type": "text",
+          "analyzer": "edge_ngram_analyzer", 
+          "search_analyzer": "keyword_analyzer",
+          "fields": {
+            "sort": {
+              "type": "keyword"
+            }
+          }
+        },
+        "photoCategories": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
+            }
+          }
+        },
+        "photoTags": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "analyzer": "edge_ngram_analyzer", 
+              "search_analyzer": "keyword_analyzer"              
             }
           }
         },
@@ -103,7 +334,7 @@
         },
         "parentalRating": {
           "type": "keyword"
-        },      
+        }, 
         "data": {
           "type": "object",
           "enabled": false

@@ -71,14 +71,14 @@ class ViewLift {
   }
 
   /**
-   * Gets video metadata from VL API for specified video ID.
+   * Gets video data from VL API for specified video ID.
    * Helper for getVideo().
    *
-   * @param    {string} site  - The site hosting the content.
-   * @param    {string} id    - The video ID to retrieve metadata for.
+   * @param    {string} site  - The site the video belongs to
+   * @param    {string} id    - The video ID to retrieve data for.
    * @param    {string} token - The ViewLift API token.
    * @return   {Promise.<object,Error>} 
-   * @fulfills {object}        Object containing the video metadata.
+   * @fulfills {object}        Object containing the video data.
    * @rejects  {RequestError}  Error making request to API.
    * @rejects  {ParseError}    Error parsing the JSON API response.
    */
@@ -95,18 +95,302 @@ class ViewLift {
         headers: { 'Authorization': token }
       }, (err, res, body) => {
         if (err) {                              // If internal error making HTTP request...
-          console.log("Internal Error getting meta for video: %s - ", id, err);
+          console.log("Internal Error getting data for video: %s - ", id, err);
           reject(err);                          // Return error.
         } else if (res.statusCode >= 400) {     // If API returns non-success status code...
-          console.log("API returned a %d error status while getting meta for video: %s - ", res.statusCode, id, body);
+          console.log("API returned a %d error status while getting data for video: %s - ", res.statusCode, id, body);
           reject(res);                          // Return response info.
         } else {                                // Else request OK, parse metadata...
           try {                                 // Attempt to parse metadata from JSON...
             const meta = JSON.parse(body).records[0];
             fulfill(meta);                      // Return the metadata!
           } catch (e) {
-            console.log("Error parsing metadata from JSON for video %s - ", id, e);
+            console.log("Error parsing data from JSON for video %s - ", id, e);
             reject(body);                        // Return response info. 
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Gets article data from VL API for specified article ID.
+   *
+   * @param    {string} site - The site the article belongs to
+   * @param    {string} id   - The article ID to retrieve data for.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        The article data.
+   * @rejects  {RequestError}  Error making request to VL API.
+   */
+  getArticle(site, id) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      self.generateToken(site)              // Generate API token 
+        .then((token) => {
+          self._getArticle(site, id, token)   // Make the Get Article request.
+            .then(meta => {
+              fulfill(meta);                // Return the article data.
+          }).catch(e => {
+            console.log("Error getting article data from API - ", e);
+            reject(e);                      // Error getting data, return error.
+          });
+      }).catch(e => {
+        console.log("Error getting API token for site %s - ", site, e);
+        reject(e);                          // Error getting VL API token, return error.
+      });
+    });
+  }
+
+  /**
+   * Gets article data from VL API for specified article ID.
+   * Helper for getArticle().
+   *
+   * @param    {string} site  - The site the article belongs to
+   * @param    {string} id    - The article ID to retrieve metadata for.
+   * @param    {string} token - The ViewLift API token.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        Object containing the article data.
+   * @rejects  {RequestError}  Error making request to API.
+   * @rejects  {ParseError}    Error parsing the JSON API response.
+   */
+  _getArticle(site, id, token) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      Request({
+        url: 'https://' + self.stage + '-api.viewlift.com/content/article',
+        method: 'GET',
+        qs: { 
+          id:   id,
+          site: site, 
+        },
+        headers: { 'Authorization': token }
+      }, (err, res, body) => {
+        if (err) {                              // If internal error making HTTP request...
+          console.log("Internal Error getting data for article: %s - ", id, err);
+          reject(err);                          // Return error.
+        } else if (res.statusCode >= 400) {     // If API returns non-success status code...
+          console.log("API returned a %d error status while getting data for article: %s - ", res.statusCode, id, body);
+          reject(res);                          // Return response info.
+        } else {                                // Else request OK, parse data...
+          try {                                 // Attempt to parse data from JSON...
+            const data = JSON.parse(body);
+            fulfill(data);                      // Return the data!
+          } catch (e) {
+            console.log("Error parsing data from JSON for article %s - ", id, e);
+            reject(body);                        // Return response info. 
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Gets event data from VL API for specified article ID.
+   *
+   * @param    {string} site - The site the event belongs to
+   * @param    {string} id   - The event ID to retrieve data for.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        The event data.
+   * @rejects  {RequestError}  Error making request to VL API.
+   */
+  getEvent(site, id) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      self.generateToken(site)              // Generate API token 
+        .then((token) => {
+          self._getEvent(site, id, token)   // Make the Get Event request.
+            .then(meta => {
+              fulfill(meta);                // Return the event data.
+          }).catch(e => {
+            console.log("Error getting event data from API - ", e);
+            reject(e);                      // Error getting data, return error.
+          });
+      }).catch(e => {
+        console.log("Error getting API token for site %s - ", site, e);
+        reject(e);                          // Error getting VL API token, return error.
+      });
+    });
+  }
+
+  /**
+   * Gets event data from VL API for specified article ID.
+   * Helper for getEvent().
+   *
+   * @param    {string} site  - The site the event belongs to
+   * @param    {string} id    - The event ID to retrieve metadata for.
+   * @param    {string} token - The ViewLift API token.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        Object containing the event data.
+   * @rejects  {RequestError}  Error making request to API.
+   * @rejects  {ParseError}    Error parsing the JSON API response.
+   */
+  _getEvent(site, id, token) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      Request({
+        url: 'https://' + self.stage + '-api.viewlift.com/content/event',
+        method: 'GET',
+        qs: { 
+          id:   id,
+          site: site, 
+        },
+        headers: { 'Authorization': token }
+      }, (err, res, body) => {
+        if (err) {                              // If internal error making HTTP request...
+          console.log("Internal Error getting data for event: %s - ", id, err);
+          reject(err);                          // Return error.
+        } else if (res.statusCode >= 400) {     // If API returns non-success status code...
+          console.log("API returned a %d error status while getting data for event: %s - ", res.statusCode, id, body);
+          reject(res);                          // Return response info.
+        } else {                                // Else request OK, parse data...
+          try {                                 // Attempt to parse data from JSON...
+            const data = JSON.parse(body);
+            fulfill(data);                      // Return the data!
+          } catch (e) {
+            console.log("Error parsing data from JSON for event %s - ", id, e);
+            reject(body);                        // Return response info. 
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Gets audio data from VL API for specified audio ID.
+   *
+   * @param    {string} site - The site the audio belongs to
+   * @param    {string} id   - The audio ID to retrieve data for.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        The audio data.
+   * @rejects  {RequestError}  Error making request to VL API.
+   */
+  getAudio(site, id) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      self.generateToken(site)              // Generate API token 
+        .then((token) => {
+          self._getAudio(site, id, token)   // Make the Get Audio request.
+            .then(meta => {
+              fulfill(meta);                // Return the audio data.
+          }).catch(e => {
+            console.log("Error getting audio data from API - ", e);
+            reject(e);                      // Error getting data, return error.
+          });
+      }).catch(e => {
+        console.log("Error getting API token for site %s - ", site, e);
+        reject(e);                          // Error getting VL API token, return error.
+      });
+    });
+  }
+
+  /**
+   * Gets audio data from VL API for specified audio ID.
+   * Helper for getAudio().
+   *
+   * @param    {string} site  - The site the audio belongs to
+   * @param    {string} id    - The audio ID to retrieve metadata for.
+   * @param    {string} token - The ViewLift API token.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        Object containing the audio data.
+   * @rejects  {RequestError}  Error making request to API.
+   * @rejects  {ParseError}    Error parsing the JSON API response.
+   */
+  _getAudio(site, id, token) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      Request({
+        url: 'https://' + self.stage + '-api.viewlift.com/content/audio',
+        method: 'GET',
+        qs: { 
+          id:   id,
+          site: site, 
+        },
+        headers: { 'Authorization': token }
+      }, (err, res, body) => {
+        if (err) {                              // If internal error making HTTP request...
+          console.log("Internal Error getting data for audio: %s - ", id, err);
+          reject(err);                          // Return error.
+        } else if (res.statusCode >= 400) {     // If API returns non-success status code...
+          console.log("API returned a %d error status while getting data for audio: %s - ", res.statusCode, id, body);
+          reject(res);                          // Return response info.
+        } else {                                // Else request OK, parse data...
+          try {                                 // Attempt to parse data from JSON...
+            const data = JSON.parse(body);
+            fulfill(data);                      // Return the data!
+          } catch (e) {
+            console.log("Error parsing data from JSON for audio %s - ", id, e);
+            reject(body);                       // Return response info. 
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Gets photo data from VL API for specified audio ID.
+   *
+   * @param    {string} site - The site the photo belongs to
+   * @param    {string} id   - The photo ID to retrieve data for.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        The photo data.
+   * @rejects  {RequestError}  Error making request to VL API.
+   */
+  getPhoto(site, id) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      self.generateToken(site)              // Generate API token 
+        .then((token) => {
+          self._getPhoto(site, id, token)   // Make the Get Photo request.
+            .then(meta => {
+              fulfill(meta);                // Return the photo data.
+          }).catch(e => {
+            console.log("Error getting photo data from API - ", e);
+            reject(e);                      // Error getting data, return error.
+          });
+      }).catch(e => {
+        console.log("Error getting API token for site %s - ", site, e);
+        reject(e);                          // Error getting VL API token, return error.
+      });
+    });
+  }
+
+  /**
+   * Gets photo data from VL API for specified photo ID.
+   * Helper for getPhoto().
+   *
+   * @param    {string} site  - The site the audio belongs to
+   * @param    {string} id    - The audio ID to retrieve metadata for.
+   * @param    {string} token - The ViewLift API token.
+   * @return   {Promise.<object,Error>} 
+   * @fulfills {object}        Object containing the audio data.
+   * @rejects  {RequestError}  Error making request to API.
+   * @rejects  {ParseError}    Error parsing the JSON API response.
+   */
+  _getPhoto(site, id, token) {
+    const self = this;
+    return new Promise((fulfill, reject) => {
+      Request({
+        url: 'https://' + self.stage + '-api.viewlift.com/content/photogallery',
+        method: 'GET',
+        qs: { 
+          id:   id,
+          site: site, 
+        },
+        headers: { 'Authorization': token }
+      }, (err, res, body) => {
+        if (err) {                              // If internal error making HTTP request...
+          console.log("Internal Error getting data for photo: %s - ", id, err);
+          reject(err);                          // Return error.
+        } else if (res.statusCode >= 400) {     // If API returns non-success status code...
+          console.log("API returned a %d error status while getting data for photo: %s - ", res.statusCode, id, body);
+          reject(res);                          // Return response info.
+        } else {                                // Else request OK, parse data...
+          try {                                 // Attempt to parse data from JSON...
+            const data = JSON.parse(body);
+            fulfill(data);                      // Return the data!
+          } catch (e) {
+            console.log("Error parsing data from JSON for photo %s - ", id, e);
+            reject(body);                       // Return response info. 
           }
         }
       });

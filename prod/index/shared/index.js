@@ -47,7 +47,6 @@ class Index {
    * Creates the index if it doesn't already exist. 
    *
    * @param    {string} index - The name of the index to insert the document under.
-   * @param    {string} type  - The document type.
    * @param    {string} id.   - The document ID.
    * @param    {object} doc   - The document object to insert.
    * @return   {Promise.<boolean,Error>}
@@ -55,7 +54,7 @@ class Index {
    * @rejects  {InsertError}    Error inserting the document.
    * @rejects  {IndexError}     Error creating an index. 
    */
-  insert(index, type, id, doc) {
+  insert(index, id, doc) {
     const self = this;
     return new Promise((fulfill, reject) => {
       // Check if index exists:
@@ -66,7 +65,7 @@ class Index {
             self._createIndex(index, template)
               .then((res) => {
                 // Insert document into newly created index:
-                self._insert(index, type, id, doc)
+                self._insert(index, id, doc)
                   .then((success) => {
                     fulfill(true); // fulfill when complete!
                 }).catch(e => {
@@ -79,7 +78,7 @@ class Index {
             });
           } else {
             // Else Insert document into existing index:
-            self._insert(index, type, id, doc)
+            self._insert(index, id, doc)
               .then((success) => {
                 fulfill(true); // fulfill when complete!
             }).catch(e => {
@@ -99,17 +98,16 @@ class Index {
    * Helper for insertDocument()
    * 
    * @param    {string} index - The name of the index to insert the document under.
-   * @param    {string} type  - The document type.
    * @param    {string} id.   - The document ID.
    * @param    {object} doc   - The document object to insert.
    * @return   {Promise.<string,Error>}
    * @fulfills {string}         Response body from ES insert request.
    * @rejects  {Error}          An ES error.
    */
-  _insert(index, type, id, doc) {
+  _insert(index, id, doc) {
     return this.es.index({
       index:   index,
-      type:    type,
+      type:    'content',
       id:      id,
       body:    doc,
       refresh: true
@@ -120,15 +118,14 @@ class Index {
    * Remove an existing document from the specified index.
    *
    * @param    {string} index - The name of the index to remove the document from.
-   * @param    {string} type  - The document type.
    * @return   {Promise.<string,Error>}
    * @fulfills {string}       Response body from ES delete request.
    * @rejects  {Error}        An ES Error.
    */
-  remove(index, type, id) {
+  remove(index, id) {
     return this.es.delete({
       index:   index,
-      type:    type,
+      type:    'content',
       id:      id,
       refresh: true
     });
@@ -148,10 +145,6 @@ class Index {
       index: name,
       body:  template
     });
-  }
-
-  reindex() {
-    return this.es.reindex({refresh: true, body: template});
   }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Lambda Function to Search Video Content Data in ElasticSearch
+ * Lambda Function to Search Content Data in ElasticSearch
  *
  * REQUIRED ENVIRONMENT VARIABLES
  *  AWS_REGION      - The AWS Region, available by default by Lambda.
@@ -23,29 +23,19 @@ const Search = require('./search');
  * @param {LambdaCallback} callback - The callback that handles the Lambda completion.
  *
  * @callback LambdaCallback
- * @param {Error}         error   - Optional error object to indicate Lambda failure. 
- * @param {object|string} success - Optional JSON.stringify compatible object or string to indicate Lambda success.
+ * @param {Error}         error     - Optional error object to indicate Lambda failure. 
+ * @param {object|string} success   - Optional JSON.stringify compatible object or string to indicate Lambda success.
  */
 exports.handler = function(event, context, callback) {
-  // Instantiate new Search Class:
-  const search = new Search(process.env.ES_ENDPOINT, process.env.ES_VERSION, event.queryStringParameters.site);
-  // Perform Suggest Video Search:
-  search.suggestVideos(event.queryStringParameters.searchTerm, event.queryStringParameters.showTrailers || false)
+  const search = new Search(process.env.ES_ENDPOINT, process.env.ES_VERSION, event.queryStringParameters.site); // Instantiate Search Class
+  //** Get Content Suggestions **//
+  search.getSuggestions(event.queryStringParameters.searchTerm, event.queryStringParameters.types, event.queryStringParameters.offset, event.queryStringParameters.limit)
     .then(results => {
-      // Push just the data of the results into `result` array:
-      const result = [];
-      if (results.hits.hits.length > 0) {
-        results.hits.hits.forEach(hits => {
-          result.push(hits._source.data);
-        });
-      }
-      // Return array of results to client:
-      return callback(null, prepareResponse(200, result));
+      return callback(null, prepareResponse(200, results)); // Return array of results back to client!
   }).catch(e => {
     console.log('Error - ', e);
     return callback(e);
   });
-
 
   /**
    * Prepares & Formats the Lamdba HTTP Response
@@ -62,4 +52,4 @@ exports.handler = function(event, context, callback) {
     };
   }
 
-}
+};
