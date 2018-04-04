@@ -101,7 +101,7 @@ class Articles extends Index {
             articlePrimaryCategory : article.gist.primaryCategory ? (Object.keys(article.gist.primaryCategory).length !== 0 ? article.gist.primaryCategory.title : null) : null,
             articleCategories      : article.categories ? (article.categories.length > 0 ? self._defineCategories(article.categories) : null) : null,
             articleTags            : article.tags ? (article.tags.length > 0 ? self._defineTags(article.tags) : null) : null,
-            addedDate              : article.gist.addedDate,
+            publishedDate          : article.gist.publishedDate,
             data                   : article
           };
           // Fulfill with article document:

@@ -143,7 +143,7 @@ class Search {
           }
         },
         sort: [
-          {'year': 'desc'}
+          {'addedDate': 'desc'}
         ]
       }
     });
@@ -173,7 +173,7 @@ class Search {
           }
         },
         sort: [
-          {'year': 'desc'}
+          {'addedDate': 'desc'}
         ]
       }
     });
@@ -203,7 +203,7 @@ class Search {
           }
         },
         sort: [
-          {'year': 'desc'}
+          {'addedDate': 'desc'}
         ]
       }
     });
@@ -233,7 +233,7 @@ class Search {
           }
         },
         sort: [
-          {'year': 'desc'}
+          {'eventDate': 'desc'}
         ]
       }
     });
@@ -263,7 +263,7 @@ class Search {
           }
         },
         sort: [
-          {'year': 'desc'}
+          {'addedDate': 'desc'}
         ]
       }
     });
@@ -293,7 +293,7 @@ class Search {
           }
         },
         sort: [
-          {'year': 'desc'}
+          {'addedDate': 'desc'}
         ]
       }
     });

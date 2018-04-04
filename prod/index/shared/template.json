@@ -223,7 +223,7 @@
           "type": "keyword"
         },
         "eventDate": {
-          "type": "keyword"
+          "type": "date"
         },
         "audioTitle": {
           "type": "text", 
@@ -335,7 +335,7 @@
         "parentalRating": {
           "type": "keyword"
         },
-        "addedDate": {
+        "publishedDate": {
           "type": "date"
         },
         "data": {
