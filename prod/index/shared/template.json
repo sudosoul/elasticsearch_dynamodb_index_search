@@ -336,7 +336,7 @@
           "type": "keyword"
         },
         "publishDate": {
-          "type": "long"
+          "type": "date"
         },
         "data": {
           "type": "object",
