@@ -103,7 +103,7 @@ class Audio extends Index {
             audioCategories      : audio.categories ? (audio.categories.length > 0 ? self._defineCategories(audio.categories) : null) : null,
             audioTags            : audio.tags ? (audio.tags.length > 0 ? self._defineTags(audio.tags) : null) : null,
             audioPeople          : audio.creditBlocks ? (audio.creditBlocks.length > 0 ? self._definePeople(audio.creditBlocks) : null) : null,
-            publishedDate        : audio.gist.publishedDate,
+            publishDate          : audio.gist.publishDate,
             data                 : audio
           };
           // Fulfill with audio document:

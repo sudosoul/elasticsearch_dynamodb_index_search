@@ -335,8 +335,8 @@
         "parentalRating": {
           "type": "keyword"
         }, 
-        "publishedDate": {
-          "type": "date"
+        "publishDate": {
+          "type": "long"
         },
         "data": {
           "type": "object",
