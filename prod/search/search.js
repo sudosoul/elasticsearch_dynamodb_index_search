@@ -70,23 +70,27 @@ class Search {
       if (types) { 
         types = types.split(',');
         types.forEach(type => {
-          switch (type) {
+          switch (type.toLowerCase()) {
             case 'videos':
+            case 'video':
               suggestions.push(self._getVideoSuggestions(searchTerm, offset, limit));     // Query Videos
               break;
             case 'series':
               suggestions.push(self._getSeriesSuggestions(searchTerm, offset, limit));    // Query Series
               break;
             case 'articles':
+            case 'article':
               suggestions.push(self._getArticleSuggestions(searchTerm, offset, limit));   // Query Articles
               break;
             case 'events':
+            case 'event':
               suggestions.push(self._getEventSuggestions(searchTerm, offset, limit));     // Query Events
               break;
             case 'audio':
               suggestions.push(self._getAudioSuggestions(searchTerm, offset, limit));     // Query Audio
               break;
             case 'photos':
+            case 'photo':
               suggestions.push(self._getPhotoSuggestions(searchTerm, offset, limit));     // Query Photos
               break;
           }

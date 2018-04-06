@@ -98,14 +98,14 @@ class ViewLift {
           console.log("Internal Error getting data for video: %s - ", id, err);
           reject(err);                          // Return error.
         } else if (res.statusCode >= 400) {     // If API returns non-success status code...
-          console.log("API returned a %d error status while getting data for video: %s - ", res.statusCode, id, body);
+          console.log("API returned a %d error status while getting data for site/video: %s/%s - ", res.statusCode, site, id, body);
           reject(res);                          // Return response info.
         } else {                                // Else request OK, parse metadata...
           try {                                 // Attempt to parse metadata from JSON...
             const meta = JSON.parse(body).records[0];
             fulfill(meta);                      // Return the metadata!
           } catch (e) {
-            console.log("Error parsing data from JSON for video %s - ", id, e);
+            console.log("Error parsing data from JSON for site/video %s/%s - ", site, id, e);
             reject(body);                        // Return response info. 
           }
         }
@@ -169,14 +169,14 @@ class ViewLift {
           console.log("Internal Error getting data for article: %s - ", id, err);
           reject(err);                          // Return error.
         } else if (res.statusCode >= 400) {     // If API returns non-success status code...
-          console.log("API returned a %d error status while getting data for article: %s - ", res.statusCode, id, body);
+          console.log("API returned a %d error status while getting data for site/article: %s/%s - ", res.statusCode, site, id, body);
           reject(res);                          // Return response info.
         } else {                                // Else request OK, parse data...
           try {                                 // Attempt to parse data from JSON...
             const data = JSON.parse(body);
             fulfill(data);                      // Return the data!
           } catch (e) {
-            console.log("Error parsing data from JSON for article %s - ", id, e);
+            console.log("Error parsing data from JSON for site/article %s/%s - ", site, id, e);
             reject(body);                        // Return response info. 
           }
         }
@@ -240,14 +240,14 @@ class ViewLift {
           console.log("Internal Error getting data for event: %s - ", id, err);
           reject(err);                          // Return error.
         } else if (res.statusCode >= 400) {     // If API returns non-success status code...
-          console.log("API returned a %d error status while getting data for event: %s - ", res.statusCode, id, body);
+          console.log("API returned a %d error status while getting data for site/event: %s/%s - ", res.statusCode, site, id, body);
           reject(res);                          // Return response info.
         } else {                                // Else request OK, parse data...
           try {                                 // Attempt to parse data from JSON...
             const data = JSON.parse(body);
             fulfill(data);                      // Return the data!
           } catch (e) {
-            console.log("Error parsing data from JSON for event %s - ", id, e);
+            console.log("Error parsing data from JSON for site/event %s/%s - ", site, id, e);
             reject(body);                        // Return response info. 
           }
         }
@@ -311,14 +311,14 @@ class ViewLift {
           console.log("Internal Error getting data for audio: %s - ", id, err);
           reject(err);                          // Return error.
         } else if (res.statusCode >= 400) {     // If API returns non-success status code...
-          console.log("API returned a %d error status while getting data for audio: %s - ", res.statusCode, id, body);
+          console.log("API returned a %d error status while getting data for site/audio: %s/%s - ", res.statusCode, site, id, body);
           reject(res);                          // Return response info.
         } else {                                // Else request OK, parse data...
           try {                                 // Attempt to parse data from JSON...
             const data = JSON.parse(body);
             fulfill(data);                      // Return the data!
           } catch (e) {
-            console.log("Error parsing data from JSON for audio %s - ", id, e);
+            console.log("Error parsing data from JSON for site/audio %s/%s - ", site, id, e);
             reject(body);                       // Return response info. 
           }
         }
@@ -382,14 +382,14 @@ class ViewLift {
           console.log("Internal Error getting data for photo: %s - ", id, err);
           reject(err);                          // Return error.
         } else if (res.statusCode >= 400) {     // If API returns non-success status code...
-          console.log("API returned a %d error status while getting data for photo: %s - ", res.statusCode, id, body);
+          console.log("API returned a %d error status while getting data for site/photo: %s/%s - ", res.statusCode, site, id, body);
           reject(res);                          // Return response info.
         } else {                                // Else request OK, parse data...
           try {                                 // Attempt to parse data from JSON...
             const data = JSON.parse(body);
             fulfill(data);                      // Return the data!
           } catch (e) {
-            console.log("Error parsing data from JSON for photo %s - ", id, e);
+            console.log("Error parsing data from JSON for site/photo %s/%s - ", site, id, e);
             reject(body);                       // Return response info. 
           }
         }
