@@ -178,17 +178,10 @@ class Search {
       type: 'content',
       body: {
         query: {
-          bool: {
-            must: {
-              multi_match: {
-                query    : searchTerm,
-                type     : 'phrase',
-                fields   : ['seriesTitle^2', 'seriesPrimaryCategory', 'seriesCategories.name', 'seriesPeople.name', 'seriesTags.name']
-              }
-            },
-            filter: [
-              {term: {'isTrailer': false}} 
-            ]
+          multi_match: {
+            query    : searchTerm,
+            type     : 'phrase',
+            fields   : ['seriesTitle^2', 'seriesPrimaryCategory', 'seriesCategories.name', 'seriesPeople.name', 'seriesTags.name']
           }
         },
         sort: [
@@ -327,4 +320,3 @@ class Search {
 
 // Expose this Search Class
 module.exports = Search;
-
