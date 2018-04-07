@@ -140,13 +140,21 @@ class Search {
       type: 'content',
       body: {
         query: {
-          multi_match: {
-            query    : searchTerm,
-            type     : 'phrase',
-            fields   : ['videoTitle', 'videoPrimaryCategory', 'videoCategories.name', 'videoPeople.name', 'videoTags.name']
+          bool: {
+            must: {
+              multi_match: {
+                query    : searchTerm,
+                type     : 'phrase',
+                fields   : ['videoTitle^2', 'videoPrimaryCategory', 'videoCategories.name', 'videoPeople.name', 'videoTags.name']
+              }
+            },
+            filter: [
+              {term: {'isTrailer': false}} 
+            ]
           }
         },
         sort: [
+          { "_score": { "order": "desc" }},
           {'publishDate': 'desc'}
         ]
       }
@@ -170,13 +178,21 @@ class Search {
       type: 'content',
       body: {
         query: {
-          multi_match: {
-            query    : searchTerm,
-            type     : 'phrase',
-            fields   : ['seriesTitle', 'seriesPrimaryCategory', 'seriesCategories.name', 'seriesPeople.name', 'seriesTags.name']
+          bool: {
+            must: {
+              multi_match: {
+                query    : searchTerm,
+                type     : 'phrase',
+                fields   : ['seriesTitle^2', 'seriesPrimaryCategory', 'seriesCategories.name', 'seriesPeople.name', 'seriesTags.name']
+              }
+            },
+            filter: [
+              {term: {'isTrailer': false}} 
+            ]
           }
         },
         sort: [
+          { "_score": { "order": "desc" }},
           {'publishDate': 'desc'}
         ]
       }
@@ -203,10 +219,11 @@ class Search {
           multi_match: {
             query    : searchTerm,
             type     : 'phrase',
-            fields   : ['articleTitle', 'articleAuthor', 'articlePrimaryCategory', 'articleCategories.name', 'articleTags.name']
+            fields   : ['articleTitle^2', 'articleAuthor', 'articlePrimaryCategory', 'articleCategories.name', 'articleTags.name']
           }
         },
         sort: [
+          { "_score": { "order": "desc" }},
           {'publishDate': 'desc'}
         ]
       }
@@ -233,10 +250,11 @@ class Search {
           multi_match: {
             query    : searchTerm,
             type     : 'phrase',
-            fields   : ['eventTitle', 'eventPrimaryCategory', 'eventCategories.name', 'eventTags.name']
+            fields   : ['eventTitle^2', 'eventPrimaryCategory', 'eventCategories.name', 'eventTags.name']
           }
         },
         sort: [
+          { "_score": { "order": "desc" }},
           {'eventDate': 'desc'}
         ]
       }
@@ -263,10 +281,11 @@ class Search {
           multi_match: {
             query    : searchTerm,
             type     : 'phrase',
-            fields   : ['audioTitle', 'audioAuthor', 'audioPrimaryCategory', 'audioCategories.name', 'audioTags.name', 'audioPeople.name']
+            fields   : ['audioTitle^2', 'audioAuthor', 'audioPrimaryCategory', 'audioCategories.name', 'audioTags.name', 'audioPeople.name']
           }
         },
         sort: [
+          { "_score": { "order": "desc" }},
           {'publishDate': 'desc'}
         ]
       }
@@ -293,10 +312,11 @@ class Search {
           multi_match: {
             query    : searchTerm,
             type     : 'phrase',
-            fields   : ['photoTitle', 'photoAuthor', 'photoPrimaryCategory', 'photoCategories.name', 'photoTags.name']
+            fields   : ['photoTitle^2', 'photoAuthor', 'photoPrimaryCategory', 'photoCategories.name', 'photoTags.name']
           }
         },
         sort: [
+          { "_score": { "order": "desc" }},
           {'publishDate': 'desc'}
         ]
       }
