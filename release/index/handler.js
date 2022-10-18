@@ -29,7 +29,7 @@
  * @requires content/series.js
  * @requires content/articles.js
  * /////////////////////////////////////////////////////////////////////////
- * @author Rob Mullins <rob@viewlift.com>
+ * @author Rob Mullins <rob.mullins \@\ ieee.org>
  * @version 2.0.0
  */
 
@@ -40,6 +40,7 @@ const Articles = new require('./content/articles'); // Import articles content t
 const Events   = new require('./content/events');   // Import events   content type class
 const Audio    = new require('./content/audio');    // Import audio    content type class
 const Photos   = new require('./content/photos');   // Import photos   content type class
+
 
 // Instantiate Required Content Classes:
 const videos   = new Videos();
